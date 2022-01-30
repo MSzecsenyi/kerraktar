@@ -32,5 +32,6 @@ class User extends Authenticatable
     public function stores()
     {
         return $this->belongsToMany(Store::class);
+        return $this->belongsTo(Group::class);
     }
 }

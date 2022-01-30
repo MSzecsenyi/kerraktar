@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Store;
 use Illuminate\Database\Seeder;
 
 class StoreSeeder extends Seeder
@@ -13,6 +14,10 @@ class StoreSeeder extends Seeder
      */
     public function run()
     {
-        //
+        for ($i = 1; $i <= 10; $i++) {
+            Store::factory()->create([
+                'district' => $i,
+            ]);
+        }
     }
 }

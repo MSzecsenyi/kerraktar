@@ -14,7 +14,7 @@ class Store extends Model
         return $this->hasMany(Item::class);
     }
 
-    public function storekeepers()
+    public function users()
     {
         return $this->belongsToMany(User::class);
     }

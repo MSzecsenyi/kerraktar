@@ -14,7 +14,7 @@ class StoreFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'address' => $this->faker->streetAddress(),
         ];
     }
 }

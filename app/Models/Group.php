@@ -13,4 +13,8 @@ class Group extends Model
     {
         return $this->hasMany(Request::class);
     }
+
+    public function users(){
+        return $this->hasMany(User::class);
+    }
 }
