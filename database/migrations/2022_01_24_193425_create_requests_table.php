@@ -22,7 +22,6 @@ class CreateRequestsTable extends Migration
             $table->boolean('is_out');
             $table->string('notes_added');
             $table->foreignId('item_id')->constrained();
-            $table->foreignId('store_id')->constrained();
             $table->softDeletes();
         });
     }

@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Item;
+use App\Models\Store;
 use Illuminate\Http\Request;
 
 class ItemController extends Controller
@@ -12,9 +15,19 @@ class ItemController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-
     {
-        //
+        return Item::all();
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Item $item)
+    {
+        return $item;
     }
 
     /**
@@ -25,18 +38,24 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $category_ids = Category::all()->pluck('id')->toArray();
+        $store_ids = Store::all()->pluck('id')->toArray();
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
+        $request->validate([
+            'district' => 'required|between:1,10||integer',
+            'category_id' => 'required|in:'.implode(",", $category_ids),
+            'store_id' => 'required|in:'.implode(",",$store_ids),
+            'is_available' => 'boolean|nullable',
+            'is_usable' => 'boolean|nullable',
+            'owner' => 'max:128|nullable',
+            'item_name' => 'required|max:128',
+            'amount' => 'integer|nullable',
+            'comment' => 'max:4096|nullable',
+        ]);
+
+        $item = Item::create($request->all());
+
+        return response()->json($item, 201);
     }
 
     /**
@@ -46,9 +65,26 @@ class ItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Item $item)
     {
-        //
+        $category_ids = Category::all()->pluck('id')->toArray();
+        $store_ids = Store::all()->pluck('id')->toArray();
+
+        $request->validate([
+            'district' => 'sometimes|between:1,10||integer',
+            'category_id' => 'sometimes|in:'.implode(",", $category_ids),
+            'store_id' => 'sometimes|in:'.implode(",",$store_ids),
+            'is_available' => 'sometimes|boolean',
+            'is_usable' => 'sometimes|boolean',
+            'owner' => 'sometimes|max:128',
+            'item_name' => 'sometimes|max:128',
+            'amount' => 'sometimes|integer',
+            'comment' => 'sometimes|max:4096',
+        ]);
+
+        $item->update($request->all());
+
+        return response()->json($item, 200);
     }
 
     /**
@@ -57,8 +93,10 @@ class ItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Item $item)
     {
-        //
+        $item->delete();
+
+        return response()->json(null, 204);
     }
 }

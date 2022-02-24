@@ -22,7 +22,8 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('password'), // password
             'remember_token' => Str::random(10),
-            'group_id' => 1,
+            'district' => 5,
+            'group_number' => 519,
             'phone' => +131323,
             'is_group' => false,
             'is_storekeeper' => true,

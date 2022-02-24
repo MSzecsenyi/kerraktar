@@ -4,7 +4,7 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class RequestFactory extends Factory
+class CategoryFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -14,7 +14,7 @@ class RequestFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'category_name' => $this->faker->word(),
         ];
     }
 }

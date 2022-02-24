@@ -19,15 +19,14 @@ class UserFactory extends Factory
         $is_storekeeper = !$is_group;
         $is_group ? $is_admin = false : $is_admin = $this->faker->boolean(30);
 
-        $groups = Group::pluck('id')->toArray();
-
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
-            'group_id' => $this->faker->randomElement($groups),
+            'district' => $this->faker->numberBetween(1, 10),
+            'group_number' => $this->faker->numberBetween(1, 2000),
             'phone' => $this->faker->e164PhoneNumber(),
             'is_group' => $is_group,
             'is_storekeeper' => $is_storekeeper,

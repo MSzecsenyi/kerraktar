@@ -16,6 +16,12 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'group_number',
+        'district',
+        'phone',
+        'is_group',
+        'is_admin',
+        'is_storekeeper'
     ];
 
     protected $hidden = [
@@ -33,5 +39,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Store::class);
         return $this->belongsTo(Group::class);
+    }
+
+    public function isStorekeeper(){
+        return $this->is_storekeeper;
     }
 }

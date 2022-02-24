@@ -9,6 +9,17 @@ class Item extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'district',
+        'store_id',
+        'is_available',
+        'is_usable',
+        'comment',
+        'amount',
+        'category_id',
+        'item_name',
+    ];
+
     public function store()
     {
         return $this->belongsTo(Store::class);

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use App\Models\Group;
 use App\Models\Store;
 use App\Models\User;
@@ -19,9 +20,11 @@ class ItemFactory extends Factory
     {
         $stores = Store::select('id', 'district')->get();
         $store = $this->faker->randomElement($stores);
+        $categories = Category::pluck('id')->toArray();
 
         return [
             'district' => $store['district'],
+            'category_id' => $this->faker->randomElement($categories),
             'store_id' => $store['id'],
             'is_available' => $this->faker->boolean(70),
             'is_usable' => $this->faker->boolean(90),

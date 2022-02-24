@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStoreUserTable extends Migration
+class CreateCategoriesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreateStoreUserTable extends Migration
      */
     public function up()
     {
-        Schema::create('store_user', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('store_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained();
+            $table->string('category_name');
         });
     }
 
@@ -28,8 +27,6 @@ class CreateStoreUserTable extends Migration
      */
     public function down()
     {
-        Schema::table('store_user', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('categories');
     }
 }
