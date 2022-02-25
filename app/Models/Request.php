@@ -15,14 +15,14 @@ class Request extends Model
         'user_id'
     ];
 
-    public function item()
+    public function items()
     {
         return $this->belongsToMany(Item::class);
     }
 
-    public function items()
+    public function user()
     {
-        return $this->belongsToMany(Item::class);
+        return $this->belongsTo(User::class);
     }
 
 

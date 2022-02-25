@@ -40,6 +40,11 @@ class User extends Authenticatable
         return $this->belongsToMany(Store::class);
     }
 
+    public function requests()
+    {
+        return $this->hasMany(Request::class);
+    }
+
     public function isStorekeeper(){
         return $this->is_storekeeper;
     }

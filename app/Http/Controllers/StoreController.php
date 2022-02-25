@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StoreResource;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Store;
@@ -17,7 +18,7 @@ class StoreController extends Controller
      */
     public function index()
     {
-        return Store::all();
+        return StoreResource::collection(Store::all());
     }
 
     /**
@@ -28,7 +29,7 @@ class StoreController extends Controller
      */
     public function show(Store $store)
     {
-        return $store;
+        return new StoreResource($store);
     }
 
     /**
@@ -97,7 +98,7 @@ class StoreController extends Controller
 
         $store->users()->detach($user);
 
-        return response()->json("kaki", 204);
+        return response()->json(null, 204);
     }
 
     /**
