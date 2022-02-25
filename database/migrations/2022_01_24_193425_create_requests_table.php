@@ -18,10 +18,10 @@ class CreateRequestsTable extends Migration
             $table->timestamps();
             $table->date('start_date');
             $table->date('end_date');
-            $table->boolean('accepted');
-            $table->boolean('is_out');
-            $table->string('notes_added');
-            $table->foreignId('item_id')->constrained();
+            $table->boolean('accepted')->nullable()->default(null);
+            $table->boolean('is_out')->default(false);
+            $table->boolean('is_completed')->default(false);
+            $table->foreignId('user_id')->constrained();
             $table->softDeletes();
         });
     }

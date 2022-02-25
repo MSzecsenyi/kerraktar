@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ItemResource;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Store;
@@ -16,7 +17,7 @@ class ItemController extends Controller
      */
     public function index()
     {
-        return Item::all();
+        return ItemResource::collection(Item::all());
     }
 
     /**
@@ -27,7 +28,7 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
-        return $item;
+        return new ItemResource($item);
     }
 
     /**

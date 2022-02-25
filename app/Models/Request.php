@@ -9,13 +9,21 @@ class Request extends Model
 {
     use HasFactory;
 
+        protected $fillable = [
+        'start_date',
+        'end_date',
+        'user_id'
+    ];
+
     public function item()
     {
         return $this->belongsToMany(Item::class);
     }
 
-    public function group()
+    public function items()
     {
-        return $this->belongsToMany(Group::class);
+        return $this->belongsToMany(Item::class);
     }
+
+
 }
