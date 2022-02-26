@@ -4,6 +4,7 @@ use App\Http\Controllers\ItemController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\StoreController;
 use App\Http\Controllers\UserController;
+use Facade\FlareClient\Context\RequestContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -48,5 +49,10 @@ Route::put      ('migrate-items',               [StoreController::class, 'migrat
 
 //REQUEST management endpoints
 Route::post     ('requests',                    [RequestController::class, 'store']);
-Route::patch    ('accept-requests/{request}',   [RequestController::class, 'acceptRequest']);
+Route::put      ('accept-requests/{request}',   [RequestController::class, 'acceptRequest']);
 Route::get      ('requests',                    [RequestController::class, 'index']);
+Route::get      ('requests/{request}',          [RequestController::class, 'show']);
+Route::put      ('requests/{request}',          [RequestController::class, 'update']);
+
+Route::put      ('takeout/{request}',           [RequestController::class, 'takeout']);
+Route::put      ('giveback/{request}',          [RequestController::class, 'giveback']);

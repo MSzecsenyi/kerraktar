@@ -27,6 +27,7 @@ class ItemResource extends JsonResource
             'item_name' => $this->item_name,
             'amount' => $this->amount,
             'comment' => $this->comment,
+            'inavailable' => InavailableItemResource::collection($this->requests)
         ];
     }
 }
