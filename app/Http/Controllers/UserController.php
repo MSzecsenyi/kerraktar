@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\User;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
@@ -15,9 +16,21 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return User::all();
+        if(!auth()->user()->is_admin){
+            return response()->json("Unauthorized request", 401);
+        }
+
+        $users = User::all();
+
+        if($request->has('district')){
+            $users = $users->filter(function ($user) use ($request){
+                return $user->district == $request->district;
+            });
+        }
+
+        return $users;
     }
 
     /**
@@ -28,6 +41,10 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        if(!auth()->user()->is_admin && !auth()->user()->id == $user->id){
+            return response()->json("Unauthorized request", 401);
+        }
+
         return $user;
     }
 
@@ -39,9 +56,13 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-        'name' => 'required|max:256',
-        'email' => 'required|email',
+        if(!auth()->user()->is_admin){
+            return response()->json("Unauthorized request", 401);
+        }
+
+        $fields = $request->validate([
+        'name' => 'required|max:256|string',
+        'email' => 'required|email|unique:users,email',
         'password' => ['required','string','confirmed'],//,Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised()],
         'password_confirmation' => 'required',
         'group_number' => 'required|integer|between:1,4000',
@@ -52,9 +73,26 @@ class UserController extends Controller
         'is_admin' => 'required|boolean',
         ]);
 
-        $user = User::create($request->all());
+        $user = User::create([
+            'name' => $fields['name'],
+            'email' => $fields['email'],
+            'password' => bcrypt($fields['password']),
+            'group_number' => $fields['group_number'],
+            'district' => $fields['district'],
+            'phone' => $fields['phone'],
+            'is_group' => $fields['is_group'],
+            'is_storekeeper' => $fields['is_storekeeper'],
+            'is_admin' => $fields['is_admin'],
+        ]);
 
-        return response()->json($user, 201);
+        $token = $user->createToken('kerraktarToken')->plainTextToken;
+
+        $response = [
+            'user' => $user,
+            'token' => $token
+        ];
+
+        return response()->json($response, 201);
     }
 
     /**
@@ -66,6 +104,10 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        if(!auth()->user()->is_admin && !auth()->user()->id == $user->id){
+            return response()->json("Unauthorized request", 401);
+        }
+
         $request->validate([
         'name' => 'sometimes|max:256',
         'email' => 'sometimes|email',
@@ -92,8 +134,45 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        if(!auth()->user()->is_admin){
+            return response()->json("Unauthorized request", 401);
+        }
+
         $user->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function logout()
+    {
+        auth()->user()->tokens()->delete();
+
+        return [
+            'message' => 'logged out'
+        ];
+    }
+
+        public function login(Request $request)
+    {
+        $fields = $request->validate([
+        'email' => 'required|email',
+        'password' => ['required','string'],//,Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised()],
+        ]);
+
+        // Check email
+        $user = User::where('email',$fields['email'])->first();
+        // Check password
+        if(!$user || !Hash::check($fields['password'], $user->password)){
+            return response()->json("Incorrect credentials", 401);
+        }
+
+        $token = $user->createToken('kerraktarToken')->plainTextToken;
+
+        $response = [
+            'user' => $user,
+            'token' => $token
+        ];
+
+        return response()->json($response, 200);
     }
 }

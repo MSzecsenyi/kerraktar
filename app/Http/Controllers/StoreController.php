@@ -16,9 +16,21 @@ class StoreController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return StoreResource::collection(Store::all());
+        if(!auth()->user()->is_admin){
+            return response()->json("Unauthorized request", 401);
+        }
+
+        $stores = Store::all();
+
+        if($request->has('district')){
+            $stores = $stores->filter(function ($store) use ($request){
+                return $store->district == $request->district;
+            });
+        }
+
+        return StoreResource::collection($stores);
     }
 
     /**
@@ -29,6 +41,10 @@ class StoreController extends Controller
      */
     public function show(Store $store)
     {
+        if(!auth()->user()->is_admin){
+            return response()->json("Unauthorized request", 401);
+        }
+
         return new StoreResource($store);
     }
 
@@ -40,6 +56,10 @@ class StoreController extends Controller
      */
     public function store(Request $request)
     {
+        if(!auth()->user()->is_admin){
+            return response()->json("Unauthorized request", 401);
+        }
+
         $request->validate([
             'district' => 'required|between:1,10||integer',
             'address' => 'required|min:10|max:256'
@@ -58,6 +78,10 @@ class StoreController extends Controller
      */
     public function destroy(Store $store)
     {
+        if(!auth()->user()->is_admin){
+            return response()->json("Unauthorized request", 401);
+        }
+
         $store->delete();
 
         return response()->json(null, 204);
@@ -70,6 +94,10 @@ class StoreController extends Controller
      */
     public function addStorekeeper(Request $request)
     {
+        if(!auth()->user()->is_admin){
+            return response()->json("Unauthorized request", 401);
+        }
+
         $user = User::findOrFail($request->userId);
         $store = Store::findOrFail($request->storeId);
 
@@ -89,6 +117,10 @@ class StoreController extends Controller
      */
     public function deleteStorekeeper(Request $request)
     {
+        if(!auth()->user()->is_admin){
+            return response()->json("Unauthorized request", 401);
+        }
+
         $user = User::findOrFail($request->userId);
         $store = Store::findOrFail($request->storeId);
 
@@ -108,6 +140,11 @@ class StoreController extends Controller
      */
     public function migrateItems(Request $request)
     {
+        if(!auth()->user()->is_admin){
+            return response()->json("Unauthorized request", 401);
+        }
+        
+
         $originalStore = Store::findOrFail($request->originalStoreId);
         // error_log($originalStore->items()->pluck('id')->toArray()[1]);
         // $destinationStore = Store::find($request->destinationStoreId);

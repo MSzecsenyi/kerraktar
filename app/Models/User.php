@@ -48,4 +48,6 @@ class User extends Authenticatable
     public function isStorekeeper(){
         return $this->is_storekeeper;
     }
+
+    
 }

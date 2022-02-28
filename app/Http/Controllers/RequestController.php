@@ -33,8 +33,21 @@ class RequestController extends Controller
         return response()->json($request, 200);
     }
 
-    public function index()
+    public function index(RouteRequest $req)
     {
+        $requests = Request::all();
+
+        if($req->has('store_id')){
+            $requests = $requests->filter(function ($request) use ($req){
+                return $request->store_id == $req->store_id;
+            });
+        }
+        if($req->has('user_id')){
+            $requests = $requests->filter(function ($request) use ($req){
+                return $request->user_id == $req->user_id;
+            });
+        }
+
         return RequestResource::collection(Request::all());
     }
 

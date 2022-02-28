@@ -8,6 +8,8 @@ use App\Models\Item;
 use App\Models\Store;
 use Illuminate\Http\Request;
 
+use function PHPSTORM_META\type;
+
 class ItemController extends Controller
 {
     /**
@@ -15,9 +17,33 @@ class ItemController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return ItemResource::collection(Item::all());
+        if(!auth()->user()->is_storekeeper && !auth()->user()->is_group){
+            return response()->json("Unauthorized request", 401);
+        }
+
+        $items = Item::all();
+
+        if($request->has('category_id')){
+            $items = $items->filter(function ($item) use ($request){
+                return $item->category_id == $request->category_id;
+            });
+        }
+        if($request->has('district')){
+            $items = $items->filter(function ($item) use ($request){
+                return $item->district == $request->district;
+            });
+        }
+        if($request->has('store_id')){
+            $items = $items->filter(function ($item) use ($request){
+                return $item->store_id == $request->store_id;
+            });
+        }
+
+
+
+        return ItemResource::collection($items);
     }
 
     /**
@@ -28,6 +54,10 @@ class ItemController extends Controller
      */
     public function show(Item $item)
     {
+        if(!auth()->user()->is_storekeeper && !auth()->user()->is_group){
+            return response()->json("Unauthorized request", 401);
+        }
+
         return new ItemResource($item);
     }
 
@@ -39,6 +69,10 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
+        if(!auth()->user()->is_storekeeper){
+            return response()->json("Unauthorized request", 401);
+        }
+
         $category_ids = Category::all()->pluck('id')->toArray();
         $store_ids = Store::all()->pluck('id')->toArray();
 
@@ -56,7 +90,7 @@ class ItemController extends Controller
 
         $item = Item::create($request->all());
 
-        return response()->json($item, 201);
+        return response()->json(new ItemResource($item), 201);
     }
 
     /**
@@ -68,6 +102,10 @@ class ItemController extends Controller
      */
     public function update(Request $request, Item $item)
     {
+        if(!auth()->user()->is_storekeeper){
+            return response()->json("Unauthorized request", 401);
+        }
+
         $category_ids = Category::all()->pluck('id')->toArray();
         $store_ids = Store::all()->pluck('id')->toArray();
 
@@ -85,7 +123,7 @@ class ItemController extends Controller
 
         $item->update($request->all());
 
-        return response()->json($item, 200);
+        return response()->json(new ItemResource($item), 200);
     }
 
     /**
@@ -96,8 +134,25 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
+        if(!auth()->user()->is_storekeeper){
+            return response()->json("Unauthorized request", 401);
+        }
+
         $item->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function updateComment(Request $request, Item $item)
+    {
+        if(!auth()->user()->is_storekeeper && !auth()->user()->is_group){
+            return response()->json("Unauthorized request", 401);
+        }
+
+        $item->update([
+            'comment' => $request->comment
+        ]);
+
+        return response()->json(new ItemResource($item), 200);
     }
 }
