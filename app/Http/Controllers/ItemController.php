@@ -23,25 +23,24 @@ class ItemController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
-        $items = Item::all();
+        $category_id = $request->category_id;
+        $district = $request->district;
+        $store_id = $request->store_id;
+        $item_name = $request->item_name;
 
-        if($request->has('category_id')){
-            $items = $items->filter(function ($item) use ($request){
-                return $item->category_id == $request->category_id;
-            });
-        }
-        if($request->has('district')){
-            $items = $items->filter(function ($item) use ($request){
-                return $item->district == $request->district;
-            });
-        }
-        if($request->has('store_id')){
-            $items = $items->filter(function ($item) use ($request){
-                return $item->store_id == $request->store_id;
-            });
-        }
-
-
+        $items = Item::when($category_id, function ($query, $category_id){
+            return $query->where('category_id', $category_id);
+        })
+        ->when($district, function ($query, $district){
+            return $query->where('district', $district);
+        })
+        ->when($store_id, function ($query, $store_id){
+            return $query->where('store_id', $store_id);
+        })
+        ->when($item_name, function ($query, $item_name){
+            return $query->where('item_name','like','%'.$item_name.'%');
+        })
+        ->paginate(20);
 
         return ItemResource::collection($items);
     }
