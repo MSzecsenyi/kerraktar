@@ -28,7 +28,7 @@ class ItemController extends Controller
         $store_id = $request->store_id;
         $item_name = $request->item_name;
 
-        $items = Item::all()->when($category_id, function ($query, $category_id){
+        $items = Item::when($category_id, function ($query, $category_id){
             return $query->where('category_id', $category_id);
         })
         ->when($district, function ($query, $district){
@@ -39,7 +39,8 @@ class ItemController extends Controller
         })
         ->when($item_name, function ($query, $item_name){
             return $query->where('item_name','like','%'.$item_name.'%');
-        });
+        })
+        ->paginate(20);
 
         return ItemResource::collection($items);
     }
