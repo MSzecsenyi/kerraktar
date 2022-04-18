@@ -27,7 +27,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     //ITEM management endpoints
         Route::get      ('items',                                       [ItemController::class, 'index']);
-        Route::get      ('items/{item}',                                [ItemController::class, 'show']);
+        Route::get      ('itemlist',                                    [ItemController::class, 'show']);
         Route::post     ('items',                                       [ItemController::class, 'store']);
         Route::put      ('items/{item}',                                [ItemController::class, 'update']);
         Route::delete   ('items/{item}',                                [ItemController::class, 'destroy']);

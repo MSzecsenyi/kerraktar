@@ -51,13 +51,15 @@ class ItemController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Item $item)
+    public function show(Request $request)
     {
         if(!auth()->user()->is_storekeeper && !auth()->user()->is_group){
             return response()->json("Unauthorized request", 401);
         }
 
-        return new ItemResource($item);
+        $items = Item::whereIn('id', $request->ids)->get();
+
+        return ItemResource::collection($items);
     }
 
     /**
