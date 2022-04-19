@@ -57,6 +57,8 @@ class ItemController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
+        error_log($request->ids[0]);
+
         $items = Item::whereIn('id', $request->ids)->get();
 
         return ItemResource::collection($items);
