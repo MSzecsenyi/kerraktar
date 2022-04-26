@@ -15,13 +15,14 @@ class RequestResource extends JsonResource
     public function toArray($request)
     {
         return[
+            'id' => $this->id,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'accepted' => $this->accepted,
             'is_out' => $this->is_out,
             'is_completed' => $this->is_completed,
             'user' => $this->user,
-            'items' => ItemResource::collection($this->items)
+            'items' => $this->items->id,
         ];
     }
 }
