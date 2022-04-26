@@ -22,7 +22,7 @@ class RequestResource extends JsonResource
             'is_out' => $this->is_out,
             'is_completed' => $this->is_completed,
             'user' => $this->user,
-            'items' => $this->items->id,
+            // 'items' => $this->items->id,
         ];
     }
 }
