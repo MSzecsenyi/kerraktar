@@ -23,19 +23,19 @@ class ItemController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
-        $category_id = $request->category_id;
-        $district = $request->district;
-        $store_id = $request->store_id;
+        $category_id = json_decode($request->category_id);
+        $district = json_decode($request->district);
+        $store_id = json_decode($request->store_id);
         $item_name = $request->item_name;
 
         $items = Item::when($category_id, function ($query, $category_id){
-            return $query->where('category_id', $category_id);
+            return $query->whereIn('category_id', $category_id);
         })
         ->when($district, function ($query, $district){
-            return $query->where('district', $district);
+            return $query->whereIn('district', $district);
         })
         ->when($store_id, function ($query, $store_id){
-            return $query->where('store_id', $store_id);
+            return $query->whereIn('store_id', $store_id);
         })
         ->when($item_name, function ($query, $item_name){
             return $query->where('item_name','like','%'.$item_name.'%');
