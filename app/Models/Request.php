@@ -12,7 +12,8 @@ class Request extends Model
         protected $fillable = [
         'start_date',
         'end_date',
-        'user_id'
+        'user_id',
+        'store_id',
     ];
 
     public function items()

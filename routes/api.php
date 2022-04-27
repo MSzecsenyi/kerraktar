@@ -27,7 +27,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     //ITEM management endpoints
         Route::get      ('items',                                       [ItemController::class, 'index']);
-        Route::post      ('itemlist',                                    [ItemController::class, 'show']);
+        Route::post     ('itemlist',                                    [ItemController::class, 'show']);
         Route::post     ('items',                                       [ItemController::class, 'store']);
         Route::put      ('items/{item}',                                [ItemController::class, 'update']);
         Route::delete   ('items/{item}',                                [ItemController::class, 'destroy']);
@@ -48,6 +48,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         Route::post     ('add-storekeeper',                             [StoreController::class, 'addStorekeeper']);
         Route::put      ('delete-storekeeper',                          [StoreController::class, 'deleteStorekeeper']);
         Route::put      ('migrate-items',                               [StoreController::class, 'migrateItems']);
+
+    //REQUEST management endpoints
+        Route::get     ('requests',                                     [RequestController::class, 'index']);
 });
 
 
@@ -60,7 +63,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 //REQUEST management endpoints
     Route::post     ('requests',                                    [RequestController::class, 'store']);
     Route::put      ('accept-requests/{request}',                   [RequestController::class, 'acceptRequest']);
-    Route::get      ('requests/{store?}/{group?}',                  [RequestController::class, 'index']);
     Route::get      ('requests/{request}',                          [RequestController::class, 'show']);
     Route::put      ('requests/{request}',                          [RequestController::class, 'update']);
 
