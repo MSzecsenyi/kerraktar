@@ -20,6 +20,11 @@ class Request extends Model
         return $this->belongsToMany(Item::class);
     }
 
+    public function store()
+    {
+        return $this->belongsTo(Store::class);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

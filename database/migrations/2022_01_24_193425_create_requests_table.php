@@ -22,6 +22,7 @@ class CreateRequestsTable extends Migration
             $table->boolean('is_out')->default(false);
             $table->boolean('is_completed')->default(false);
             $table->foreignId('user_id')->constrained();
+            $table->foreignId('store_id')->constrained();
             $table->softDeletes();
         });
     }

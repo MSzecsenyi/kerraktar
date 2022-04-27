@@ -18,6 +18,11 @@ class Store extends Model
         return $this->hasMany(Item::class);
     }
 
+    public function requests()
+    {
+        return $this->hasMany(Request::class);
+    }
+
     public function users()
     {
         return $this->belongsToMany(User::class);
