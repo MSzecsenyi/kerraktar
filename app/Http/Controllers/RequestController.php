@@ -42,7 +42,6 @@ class RequestController extends Controller
             $requests = new Collection();
             foreach($stores as $store){
                 $requests = $requests->merge($store->requests()->get());
-                error_log($requests[0]);
             }
             return RequestResource::collection($requests);
         }
