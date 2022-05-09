@@ -37,20 +37,21 @@ class RequestController extends Controller
 
     public function index(RouteRequest $req)
     {
-        if(auth()->user()->is_storekeeper){
-            $stores = auth()->user()->stores()->get();
-            $requests = new Collection();
-            foreach($stores as $store){
-                $requests = $requests->merge($store->requests()->get());
-            }
-            return RequestResource::collection($requests);
-        }
-        elseif(auth()->user()->is_group){
-            return RequestResource::collection(auth()->user()->requests()->get());
-        }
-        else{
-            return response()->json("Unauthorized request", 401);
-        }
+        //TODO WIP
+        // if(auth()->user()->is_storekeeper){
+        //     $stores = auth()->user()->stores()->get();
+        //     $requests = new Collection();
+        //     foreach($stores as $store){
+        //         $requests = $requests->merge($store->requests()->get());
+        //     }
+        //     return RequestResource::collection($requests);
+        // }
+        // elseif(auth()->user()->is_group){
+        //     return RequestResource::collection(auth()->user()->requests()->get());
+        // }
+        // else{
+        //     return response()->json("Unauthorized request", 401);
+        // }
 
 
 
