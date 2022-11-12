@@ -54,8 +54,8 @@ class UserSeeder extends Seeder
             'group_number' => 519,
             'phone' => +131323,
             'is_group' => true,
-            'is_storekeeper' => fasle,
-            'is_admin' => fasle,
+            'is_storekeeper' => false,
+            'is_admin' => false,
         ]);
 
 
