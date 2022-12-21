@@ -23,34 +23,35 @@ use Illuminate\Support\Facades\Route;
 //Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
-        Route::post     ('logout',                      [UserController::class, 'logout']);
+    Route::post('logout',                      [UserController::class, 'logout']);
 
     //ITEM management endpoints
-        Route::get      ('items',                                       [ItemController::class, 'index']);
-        Route::post     ('itemlist',                                    [ItemController::class, 'show']);
-        Route::post     ('items',                                       [ItemController::class, 'store']);
-        Route::put      ('items/{item}',                                [ItemController::class, 'update']);
-        Route::delete   ('items/{item}',                                [ItemController::class, 'destroy']);
-        Route::put      ('items-comment/{item}',                        [ItemController::class, 'updateComment']);
+    Route::get('items',                                      [ItemController::class, 'index']);
+    Route::post('itemlist',                                  [ItemController::class, 'show']);
+    Route::post('items',                                     [ItemController::class, 'store']);
+    Route::put('items/{item}',                               [ItemController::class, 'update']);
+    Route::delete('items/{item}',                            [ItemController::class, 'destroy']);
+    Route::put('items-comment/{item}',                       [ItemController::class, 'updateComment']);
 
     //USER management endpoints
-        Route::get      ('users',                                       [UserController::class, 'index']);
-        Route::get      ('users/{user}',                                [UserController::class, 'show']);
-        Route::post     ('users',                                       [UserController::class, 'store']);
-        Route::put      ('users/{user}',                                [UserController::class, 'update']);
-        Route::delete   ('users/{user}',                                [UserController::class, 'destroy']);
+    Route::get('users',                                      [UserController::class, 'index']);
+    Route::get('users/{user}',                               [UserController::class, 'show']);
+    Route::post('users',                                     [UserController::class, 'store']);
+    Route::put('users/{user}',                               [UserController::class, 'update']);
+    Route::delete('users/{user}',                            [UserController::class, 'destroy']);
+    Route::get('checkuser',                                [UserController::class, 'check']);
 
     //STORE management endpoints
-        Route::get      ('stores',                                      [StoreController::class, 'index']);
-        Route::get      ('stores/{store}',                              [StoreController::class, 'show']);
-        Route::post     ('stores',                                      [StoreController::class, 'store']);
-        Route::delete   ('stores/{store}',                              [StoreController::class, 'destroy']);
-        Route::post     ('add-storekeeper',                             [StoreController::class, 'addStorekeeper']);
-        Route::put      ('delete-storekeeper',                          [StoreController::class, 'deleteStorekeeper']);
-        Route::put      ('migrate-items',                               [StoreController::class, 'migrateItems']);
+    Route::get('stores',                                     [StoreController::class, 'index']);
+    Route::get('stores/{store}',                             [StoreController::class, 'show']);
+    Route::post('stores',                                    [StoreController::class, 'store']);
+    Route::delete('stores/{store}',                          [StoreController::class, 'destroy']);
+    Route::post('add-storekeeper',                           [StoreController::class, 'addStorekeeper']);
+    Route::put('delete-storekeeper',                         [StoreController::class, 'deleteStorekeeper']);
+    Route::put('migrate-items',                              [StoreController::class, 'migrateItems']);
 
     //REQUEST management endpoints
-        Route::get     ('requests',                                     [RequestController::class, 'index']);
+    Route::get('requests',                                   [RequestController::class, 'index']);
 });
 
 
@@ -58,13 +59,13 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 //Public routes
 
 //USER management endpoints
-    Route::post     ('login',                                       [UserController::class, 'login']);
+Route::post('login',                                       [UserController::class, 'login']);
 
 //REQUEST management endpoints
-    Route::post     ('requests',                                    [RequestController::class, 'store']);
-    Route::put      ('accept-requests/{request}',                   [RequestController::class, 'acceptRequest']);
-    Route::get      ('requests/{request}',                          [RequestController::class, 'show']);
-    Route::put      ('requests/{request}',                          [RequestController::class, 'update']);
+Route::post('requests',                                    [RequestController::class, 'store']);
+Route::put('accept-requests/{request}',                   [RequestController::class, 'acceptRequest']);
+Route::get('requests/{request}',                          [RequestController::class, 'show']);
+Route::put('requests/{request}',                          [RequestController::class, 'update']);
 
-    Route::put      ('takeout/{request}',                           [RequestController::class, 'takeout']);
-    Route::put      ('giveback/{request}',                          [RequestController::class, 'giveback']);
+Route::put('takeout/{request}',                           [RequestController::class, 'takeout']);
+Route::put('giveback/{request}',                          [RequestController::class, 'giveback']);

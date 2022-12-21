@@ -18,14 +18,14 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        if(!auth()->user()->is_admin){
+        if (!auth()->user()->is_admin) {
             return response()->json("Unauthorized request", 401);
         }
 
         $users = User::all();
 
-        if($request->has('district')){
-            $users = $users->filter(function ($user) use ($request){
+        if ($request->has('district')) {
+            $users = $users->filter(function ($user) use ($request) {
                 return $user->district == $request->district;
             });
         }
@@ -41,11 +41,16 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        if(!auth()->user()->is_admin && !auth()->user()->id == $user->id){
+        if (!auth()->user()->is_admin && !auth()->user()->id == $user->id) {
             return response()->json("Unauthorized request", 401);
         }
 
         return $user;
+    }
+
+    public function check()
+    {
+        return auth()->user();
     }
 
     /**
@@ -56,21 +61,21 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        if(!auth()->user()->is_admin){
+        if (!auth()->user()->is_admin) {
             return response()->json("Unauthorized request", 401);
         }
 
         $fields = $request->validate([
-        'name' => 'required|max:256|string',
-        'email' => 'required|email|unique:users,email',
-        'password' => ['required','string','confirmed'],//,Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised()],
-        'password_confirmation' => 'required',
-        'group_number' => 'required|integer|between:1,4000',
-        'district' => 'required|integer|between:1,10',
-        'phone' => 'nullable|integer',
-        'is_group' => 'required|boolean',
-        'is_storekeeper' => 'required|boolean',
-        'is_admin' => 'required|boolean',
+            'name' => 'required|max:256|string',
+            'email' => 'required|email|unique:users,email',
+            'password' => ['required', 'string', 'confirmed'], //,Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised()],
+            'password_confirmation' => 'required',
+            'group_number' => 'required|integer|between:1,4000',
+            'district' => 'required|integer|between:1,10',
+            'phone' => 'nullable|integer',
+            'is_group' => 'required|boolean',
+            'is_storekeeper' => 'required|boolean',
+            'is_admin' => 'required|boolean',
         ]);
 
         $user = User::create([
@@ -104,21 +109,21 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        if(!auth()->user()->is_admin && !auth()->user()->id == $user->id){
+        if (!auth()->user()->is_admin && !auth()->user()->id == $user->id) {
             return response()->json("Unauthorized request", 401);
         }
 
         $request->validate([
-        'name' => 'sometimes|max:256',
-        'email' => 'sometimes|email',
-        'password' => ['sometimes','string'],//,'confirmed',Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised()],
-        'password_confirmation' => 'sometimes',
-        'group_number' => 'sometimes|integer|between:1,4000',
-        'district' => 'sometimes|integer|between:1,10',
-        'phone' => 'sometimes|nullable|integer',
-        'is_group' => 'prohibited',
-        'is_storekeeper' => 'prohibited',
-        'is_admin' => 'prohibited',
+            'name' => 'sometimes|max:256',
+            'email' => 'sometimes|email',
+            'password' => ['sometimes', 'string'], //,'confirmed',Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised()],
+            'password_confirmation' => 'sometimes',
+            'group_number' => 'sometimes|integer|between:1,4000',
+            'district' => 'sometimes|integer|between:1,10',
+            'phone' => 'sometimes|nullable|integer',
+            'is_group' => 'prohibited',
+            'is_storekeeper' => 'prohibited',
+            'is_admin' => 'prohibited',
         ]);
 
         $user->update($request->all());
@@ -134,7 +139,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        if(!auth()->user()->is_admin){
+        if (!auth()->user()->is_admin) {
             return response()->json("Unauthorized request", 401);
         }
 
@@ -152,17 +157,17 @@ class UserController extends Controller
         ];
     }
 
-        public function login(Request $request)
+    public function login(Request $request)
     {
         $fields = $request->validate([
-        'email' => 'required|email',
-        'password' => ['required','string'],//,Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised()],
+            'email' => 'required|email',
+            'password' => ['required', 'string'], //,Password::min(8)->mixedCase()->letters()->numbers()->symbols()->uncompromised()],
         ]);
 
         // Check email
-        $user = User::where('email',$fields['email'])->first();
+        $user = User::where('email', $fields['email'])->first();
         // Check password
-        if(!$user || !Hash::check($fields['password'], $user->password)){
+        if (!$user || !Hash::check($fields['password'], $user->password)) {
             return response()->json("Incorrect credentials", 401);
         }
 
