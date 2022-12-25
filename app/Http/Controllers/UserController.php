@@ -48,8 +48,15 @@ class UserController extends Controller
         return $user;
     }
 
-    public function check()
+    public function check(Request $request)
     {
+        $response = [
+            'user' => auth()->user(),
+            'token' => $request->bearerToken()
+        ];
+
+        return response()->json($response, 200);
+
         return auth()->user();
     }
 

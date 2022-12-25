@@ -39,7 +39,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('users',                                     [UserController::class, 'store']);
     Route::put('users/{user}',                               [UserController::class, 'update']);
     Route::delete('users/{user}',                            [UserController::class, 'destroy']);
-    Route::get('checkuser',                                [UserController::class, 'check']);
+    Route::get('checkuser',                                  [UserController::class, 'check']);
 
     //STORE management endpoints
     Route::get('stores',                                     [StoreController::class, 'index']);
