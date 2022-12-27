@@ -157,7 +157,16 @@ class UserController extends Controller
 
     public function logout()
     {
-        auth()->user()->tokens()->delete();
+        auth()->user()->currentAccessToken()->delete();
+
+        return [
+            'message' => 'logged out'
+        ];
+    }
+
+    public function logoutAll()
+    {
+        auth()->user()->xtokens()->delete();
 
         return [
             'message' => 'logged out'

@@ -23,7 +23,8 @@ use Illuminate\Support\Facades\Route;
 //Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
-    Route::post('logout',                      [UserController::class, 'logout']);
+    Route::post('logout',                                   [UserController::class, 'logout']);
+    Route::post('logoutall',                                [UserController::class, 'logoutAll']);
 
     //ITEM management endpoints
     Route::get('items',                                      [ItemController::class, 'index']);
