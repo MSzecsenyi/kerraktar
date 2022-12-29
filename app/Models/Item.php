@@ -18,6 +18,7 @@ class Item extends Model
         'amount',
         'category_id',
         'item_name',
+        'in_store_amount',
     ];
 
     public function store()
@@ -30,7 +31,13 @@ class Item extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function requests(){
+    public function requests()
+    {
         return $this->belongsToMany(Request::class);
+    }
+
+    public function uniqueItems()
+    {
+        return $this->hasMany(UniqueItem::class);
     }
 }

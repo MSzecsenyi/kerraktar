@@ -5,27 +5,22 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Store extends Model
+class UniqueItem extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'district',
-        'address',
+        'is_usable',
+        'alt_name'
     ];
 
     public function items()
     {
-        return $this->hasMany(Item::class);
+        return $this->belongsToMany(Item::class);
     }
 
     public function requests()
     {
-        return $this->hasMany(Request::class);
-    }
-
-    public function users()
-    {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(Request::class);
     }
 }

@@ -19,12 +19,12 @@ class CreateItemsTable extends Migration
             $table->integer('district');
             $table->foreignId('category_id')->onDelete('set null');
             $table->foreignId('store_id')->onDelete('set null');
-            $table->boolean('is_available')->default(true);
-            $table->boolean('is_usable')->default(true);
             $table->string('owner')->nullable();
             $table->string('item_name');
             $table->integer('amount')->default(1);
             $table->string('comment')->nullable();
+            $table->boolean('is_unique')->default(false);
+            $table->integer('in_store_amount')->default(1);
             $table->softDeletes();
         });
     }

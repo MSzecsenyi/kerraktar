@@ -3,10 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Category;
-use App\Models\Group;
 use App\Models\Store;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ItemFactory extends Factory
@@ -21,17 +18,18 @@ class ItemFactory extends Factory
         $stores = Store::select('id', 'district')->get();
         $store = $this->faker->randomElement($stores);
         $categories = Category::pluck('id')->toArray();
+        $amount = $this->faker->numberBetween(1, 10);
 
         return [
             'district' => $store['district'],
             'category_id' => $this->faker->randomElement($categories),
             'store_id' => $store['id'],
-            'is_available' => $this->faker->boolean(70),
-            'is_usable' => $this->faker->boolean(90),
             'owner' => $this->faker->sentence(3), // not relevant field, some districts might need it
             'item_name' => $this->faker->word(),
-            'amount' => $this->faker->numberBetween(1,50),
+            'amount' => $amount,
             'comment' => $this->faker->text(50),
+            'is_unique' => $this->faker->optional($weight = 0.1, $default = false)->boolean(),
+            'in_store_amount' => $this->faker->numberBetween(1, $amount)
         ];
     }
 }

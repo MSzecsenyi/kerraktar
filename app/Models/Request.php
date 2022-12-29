@@ -9,7 +9,7 @@ class Request extends Model
 {
     use HasFactory;
 
-        protected $fillable = [
+    protected $fillable = [
         'start_date',
         'end_date',
         'user_id',
@@ -21,6 +21,11 @@ class Request extends Model
         return $this->belongsToMany(Item::class);
     }
 
+    public function uniqueItems()
+    {
+        return $this->belongsToMany(UniqueItem::class);
+    }
+
     public function store()
     {
         return $this->belongsTo(Store::class);
@@ -30,6 +35,4 @@ class Request extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-
 }
