@@ -24,6 +24,11 @@ class Store extends Model
         return $this->hasMany(Request::class);
     }
 
+    public function takeouts()
+    {
+        return $this->hasMany(TakeOut::class);
+    }
+
     public function users()
     {
         return $this->belongsToMany(User::class);

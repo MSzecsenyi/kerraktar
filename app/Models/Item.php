@@ -36,6 +36,11 @@ class Item extends Model
         return $this->belongsToMany(Request::class);
     }
 
+    public function takeouts()
+    {
+        return $this->belongsToMany(TakeOut::class);
+    }
+
     public function uniqueItems()
     {
         return $this->hasMany(UniqueItem::class);

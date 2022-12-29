@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateRequestsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,12 @@ class CreateRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::create('requests', function (Blueprint $table) {
+        Schema::create('item_take_outs', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->date('start_date');
-            $table->date('end_date');
-            $table->foreignId('user_id')->constrained();
-            $table->foreignId('store_id')->constrained();
-            $table->softDeletes();
+            $table->foreignId('request_id')->constrained();
+            $table->foreignId('item_id')->constrained();
+            $table->string('notes_added')->nullable();
         });
     }
 
@@ -31,6 +29,6 @@ class CreateRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('requests');
+        Schema::dropIfExists('item_take_outs');
     }
-}
+};

@@ -45,9 +45,13 @@ class User extends Authenticatable
         return $this->hasMany(Request::class);
     }
 
-    public function isStorekeeper(){
-        return $this->is_storekeeper;
+    public function takeouts()
+    {
+        return $this->hasMany(TakeOut::class);
     }
 
-    
+    public function isStorekeeper()
+    {
+        return $this->is_storekeeper;
+    }
 }
