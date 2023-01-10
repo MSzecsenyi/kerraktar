@@ -3,18 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\RequestResource;
-use App\Models\Item;
 use App\Models\Request;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request as RouteRequest;
-use Illuminate\Routing\Router;
 
 class RequestController extends Controller
 {
     public function store(RouteRequest $req)
     {
-        User::findOrFail($req->user_id)->where('is_group',true)->get();
+        User::findOrFail($req->user_id)->where('is_group', true)->get();
 
         $newRequest = Request::create([
             'user_id'       => $req->user_id,
@@ -65,7 +62,7 @@ class RequestController extends Controller
 
     public function update(RouteRequest $req, Request $request)
     {
-        User::findOrFail($request->user_id)->where('is_group',true)->get();
+        User::findOrFail($request->user_id)->where('is_group', true)->get();
 
         $request->update($req->all());
         $itemIds = $req->itemIds;
@@ -85,5 +82,4 @@ class RequestController extends Controller
         $request->is_completed = true;
         $request->save();
     }
-
 }

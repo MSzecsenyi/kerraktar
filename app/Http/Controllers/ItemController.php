@@ -8,8 +8,6 @@ use App\Models\Item;
 use App\Models\Store;
 use Illuminate\Http\Request;
 
-use function PHPSTORM_META\type;
-
 class ItemController extends Controller
 {
     /**
@@ -19,7 +17,7 @@ class ItemController extends Controller
      */
     public function index(Request $request)
     {
-        if(!auth()->user()->is_storekeeper && !auth()->user()->is_group){
+        if (!auth()->user()->is_storekeeper && !auth()->user()->is_group) {
             return response()->json("Unauthorized request", 401);
         }
 
@@ -28,19 +26,19 @@ class ItemController extends Controller
         $store_id = json_decode($request->store_id);
         $item_name = $request->item_name;
 
-        $items = Item::when($category_id, function ($query, $category_id){
+        $items = Item::when($category_id, function ($query, $category_id) {
             return $query->whereIn('category_id', $category_id);
         })
-        ->when($district, function ($query, $district){
-            return $query->whereIn('district', $district);
-        })
-        ->when($store_id, function ($query, $store_id){
-            return $query->whereIn('store_id', $store_id);
-        })
-        ->when($item_name, function ($query, $item_name){
-            return $query->where('item_name','like','%'.$item_name.'%');
-        })
-        ->paginate(20);
+            ->when($district, function ($query, $district) {
+                return $query->whereIn('district', $district);
+            })
+            ->when($store_id, function ($query, $store_id) {
+                return $query->whereIn('store_id', $store_id);
+            })
+            ->when($item_name, function ($query, $item_name) {
+                return $query->where('item_name', 'like', '%' . $item_name . '%');
+            })->get();
+        // ->paginate(20);
 
         return ItemResource::collection($items);
     }
@@ -53,7 +51,7 @@ class ItemController extends Controller
      */
     public function show(Request $request)
     {
-        if(!auth()->user()->is_storekeeper && !auth()->user()->is_group){
+        if (!auth()->user()->is_storekeeper && !auth()->user()->is_group) {
             return response()->json("Unauthorized request", 401);
         }
 
@@ -72,7 +70,7 @@ class ItemController extends Controller
      */
     public function store(Request $request)
     {
-        if(!auth()->user()->is_storekeeper){
+        if (!auth()->user()->is_storekeeper) {
             return response()->json("Unauthorized request", 401);
         }
 
@@ -81,8 +79,8 @@ class ItemController extends Controller
 
         $request->validate([
             'district' => 'required|between:1,10||integer',
-            'category_id' => 'required|in:'.implode(",", $category_ids),
-            'store_id' => 'required|in:'.implode(",",$store_ids),
+            'category_id' => 'required|in:' . implode(",", $category_ids),
+            'store_id' => 'required|in:' . implode(",", $store_ids),
             'is_available' => 'boolean|nullable',
             'is_usable' => 'boolean|nullable',
             'owner' => 'max:128|nullable',
@@ -105,7 +103,7 @@ class ItemController extends Controller
      */
     public function update(Request $request, Item $item)
     {
-        if(!auth()->user()->is_storekeeper){
+        if (!auth()->user()->is_storekeeper) {
             return response()->json("Unauthorized request", 401);
         }
 
@@ -114,8 +112,8 @@ class ItemController extends Controller
 
         $request->validate([
             'district' => 'sometimes|between:1,10||integer',
-            'category_id' => 'sometimes|in:'.implode(",", $category_ids),
-            'store_id' => 'sometimes|in:'.implode(",",$store_ids),
+            'category_id' => 'sometimes|in:' . implode(",", $category_ids),
+            'store_id' => 'sometimes|in:' . implode(",", $store_ids),
             'is_available' => 'sometimes|boolean',
             'is_usable' => 'sometimes|boolean',
             'owner' => 'sometimes|max:128',
@@ -137,7 +135,7 @@ class ItemController extends Controller
      */
     public function destroy(Item $item)
     {
-        if(!auth()->user()->is_storekeeper){
+        if (!auth()->user()->is_storekeeper) {
             return response()->json("Unauthorized request", 401);
         }
 
@@ -148,7 +146,7 @@ class ItemController extends Controller
 
     public function updateComment(Request $request, Item $item)
     {
-        if(!auth()->user()->is_storekeeper && !auth()->user()->is_group){
+        if (!auth()->user()->is_storekeeper && !auth()->user()->is_group) {
             return response()->json("Unauthorized request", 401);
         }
 

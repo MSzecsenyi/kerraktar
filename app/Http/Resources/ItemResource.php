@@ -14,20 +14,20 @@ class ItemResource extends JsonResource
      */
     public function toArray($request)
     {
-        return[
+        return [
             'id' => $this->id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            // 'created_at' => $this->created_at,
+            // 'updated_at' => $this->updated_at,
             'district' => $this->district,
-            'category' => new CategoryResource($this->category),
-            'store' => new StoreResource($this->store),
-            'is_available' => $this->is_available,
-            'is_usable' => $this->is_usable,
+            'category' => $this->category_id,
+            'store' => $this->store_id,
             'owner' => $this->owner,
             'item_name' => $this->item_name,
             'amount' => $this->amount,
             'comment' => $this->comment,
-            'inavailable' => InavailableItemResource::collection($this->requests)
+            'is_unique' => $this->is_unique,
+            'in_store_amount' => $this->in_store_amount,
+            // 'inavailable' => InavailableItemResource::collection($this->requests)
         ];
     }
 }
