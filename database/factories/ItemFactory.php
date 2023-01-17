@@ -28,7 +28,7 @@ class ItemFactory extends Factory
             'item_name' => $this->faker->word(),
             'amount' => $amount,
             'comment' => $this->faker->text(50),
-            'is_unique' => $this->faker->optional($weight = 0.1, $default = false)->boolean(),
+            'is_unique' => $this->faker->optional($weight = 0.4, $default = false)->boolean(),
             'in_store_amount' => $this->faker->numberBetween(1, $amount)
         ];
     }
