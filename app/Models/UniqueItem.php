@@ -14,6 +14,8 @@ class UniqueItem extends Model
         'alt_name'
     ];
 
+    public $incrementing = false;
+
     public function items()
     {
         return $this->belongsToMany(Item::class);

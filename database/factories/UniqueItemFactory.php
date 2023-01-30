@@ -18,7 +18,6 @@ class UniqueItemFactory extends Factory
     {
         echo ('.');
         return [
-            'item_id' => $this->faker->numberBetween(1, 3),
             'alt_name' => $this->faker->word(),
             // 'is_usable' => $this->faker->optional($weight = 0.8, $default = false)->boolean(),
             // 'hehe' => 'hehe'
