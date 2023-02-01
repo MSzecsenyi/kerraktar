@@ -14,10 +14,6 @@ class StoreSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i <= 50; $i++) {
-            Store::factory()->create([
-                'district' => $i,
-            ]);
-        }
+        Store::factory(20)->create();
     }
 }

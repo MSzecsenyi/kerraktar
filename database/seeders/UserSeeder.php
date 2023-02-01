@@ -58,7 +58,19 @@ class UserSeeder extends Seeder
             'is_admin' => false,
         ]);
 
-
+        User::factory()->create([
+            'name' => "superadmin",
+            'email' => "superadmin@nn.nn",
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'), // password
+            'remember_token' => Str::random(10),
+            'district' => 5,
+            'group_number' => 519,
+            'phone' => +131323,
+            'is_group' => true,
+            'is_storekeeper' => true,
+            'is_admin' => true,
+        ]);
 
         User::factory(50)->create();
     }
