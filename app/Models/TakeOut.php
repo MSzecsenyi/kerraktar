@@ -14,6 +14,7 @@ class TakeOut extends Model
         'end_date',
         'user_id',
         'store_id',
+        'takeout_name',
     ];
 
     public function items()

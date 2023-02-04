@@ -13,13 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('take_outs', function (Blueprint $table) {
+        Schema::create('takeouts', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
             $table->date('start_date');
-            $table->date('end_date');
+            $table->date('end_date')->nullable();
             $table->foreignId('user_id')->constrained();
             $table->foreignId('store_id')->constrained();
+            $table->string('takeout_name');
             $table->softDeletes();
         });
     }
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('take_outs');
+        Schema::dropIfExists('takeouts');
     }
 };

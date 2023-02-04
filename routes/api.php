@@ -3,6 +3,7 @@
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\TakeOutController;
 use App\Http\Controllers\UserController;
 use Facade\FlareClient\Context\RequestContext;
 use Illuminate\Http\Request;
@@ -53,6 +54,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     //REQUEST management endpoints
     Route::get('requests',                                   [RequestController::class, 'index']);
+
+    //TAKEOUT management endpoints
+    Route::post('takeouts',                                   [TakeOutController::class, 'create']);
+    Route::get('takeouts',                                   [TakeOutController::class, 'index']);
 });
 
 

@@ -18,6 +18,7 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignId('request_id')->constrained();
             $table->foreignId('item_id')->constrained();
+            $table->int('amount')->default(0);
             $table->string('notes_added')->nullable();
         });
     }
