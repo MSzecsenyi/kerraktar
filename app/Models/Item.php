@@ -36,7 +36,7 @@ class Item extends Model
         return $this->belongsToMany(Request::class);
     }
 
-    public function takeouts()
+    public function takeOuts()
     {
         return $this->belongsToMany(TakeOut::class);
     }

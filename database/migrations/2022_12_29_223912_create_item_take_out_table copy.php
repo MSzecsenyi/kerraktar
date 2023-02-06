@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('item_take_outs', function (Blueprint $table) {
+        Schema::create('item_take_out', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->foreignId('request_id')->constrained();
+            $table->foreignId('take_out_id')->constrained();
             $table->foreignId('item_id')->constrained();
-            $table->int('amount')->default(0);
+            $table->integer('amount')->default(0);
             $table->string('notes_added')->nullable();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('item_take_outs');
+        Schema::dropIfExists('item_take_out');
     }
 };

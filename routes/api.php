@@ -56,8 +56,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('requests',                                   [RequestController::class, 'index']);
 
     //TAKEOUT management endpoints
-    Route::post('takeouts',                                   [TakeOutController::class, 'create']);
+    Route::post('takeouts',                                  [TakeOutController::class, 'create']);
     Route::get('takeouts',                                   [TakeOutController::class, 'index']);
+    Route::get('takeouts/{takeOut}',                         [TakeOutController::class, 'show']);
+    Route::put('takeouts/{takeOut}',                         [TakeOutController::class, 'returnTakeOut']);
 });
 
 

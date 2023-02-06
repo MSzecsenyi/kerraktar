@@ -45,7 +45,7 @@ class User extends Authenticatable
         return $this->hasMany(Request::class);
     }
 
-    public function takeouts()
+    public function takeOuts()
     {
         return $this->hasMany(TakeOut::class);
     }

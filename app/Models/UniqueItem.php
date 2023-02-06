@@ -16,9 +16,9 @@ class UniqueItem extends Model
 
     public $incrementing = false;
 
-    public function items()
+    public function item()
     {
-        return $this->belongsToMany(Item::class);
+        return $this->belongsTo(Item::class);
     }
 
     public function requests()
@@ -26,7 +26,7 @@ class UniqueItem extends Model
         return $this->belongsToMany(Request::class);
     }
 
-    public function takeouts()
+    public function takeOuts()
     {
         return $this->belongsToMany(TakeOut::class);
     }
