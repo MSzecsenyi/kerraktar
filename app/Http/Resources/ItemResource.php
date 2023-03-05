@@ -20,7 +20,7 @@ class ItemResource extends JsonResource
                 // 'created_at' => $this->created_at,
                 // 'updated_at' => $this->updated_at,
                 'district' => $this->district,
-                'category' => $this->category_id,
+                'category' => $this->category->category_name,
                 'store' => $this->store_id,
                 'owner' => $this->owner,
                 'item_name' => $this->item_name,
