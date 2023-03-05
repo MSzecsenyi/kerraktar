@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\TakeOutResource;
+use App\Models\Item;
 use App\Models\TakeOut;
+use App\Models\UniqueItem;
+use Error;
 use Illuminate\Http\Request;
 use Psy\Readline\Hoa\Console;
 
@@ -61,9 +64,14 @@ class TakeOutController extends Controller
         }
 
         foreach ($request->uniqueItems as $uniqueItem) {
-            $newTakeout->items()->attach([
-                $uniqueItem['item_id'] => ['item_id' => $uniqueItem['item_id']]
+
+            $newTakeout->items()->syncWithoutDetaching([
+                $item['id'] => ['amount' => -1]
             ]);
+
+            $newTakeout->uniqueItems()->attach(
+                $uniqueItem
+            );
         }
 
         return response()->json($newTakeout, 201);

@@ -38,7 +38,7 @@ class Item extends Model
 
     public function takeOuts()
     {
-        return $this->belongsToMany(TakeOut::class);
+        return $this->belongsToMany(TakeOut::class)->withPivot('amount')->withTimestamps();
     }
 
     public function uniqueItems()

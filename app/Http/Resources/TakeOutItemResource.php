@@ -2,7 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Item;
+use App\Models\UniqueItem;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
 
 class TakeOutItemResource extends JsonResource
 {
@@ -14,9 +17,24 @@ class TakeOutItemResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'id' => $this->id,
-            'amount' => $this->amount,
-        ];
+        if ($this->pivot->amount != -1) {
+            return [
+                'id' => $this->id,
+                'amount' => $this->pivot->amount,
+            ];
+        } else {
+            $uniqueItemIds = $this->uniqueItems()
+                ->whereHas('takeOuts', function ($query) {
+                    $query->where('take_out_id', $this->pivot->take_out_id);
+                })
+                ->pluck('id');
+
+            $uniqueItems = UniqueItem::whereIn('id', $uniqueItemIds)->get();
+
+            return [
+                'id' => $this->id,
+                'unique_items' => TakeOutUniqueItemResource::collection($uniqueItems),
+            ];
+        }
     }
 }

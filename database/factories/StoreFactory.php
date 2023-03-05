@@ -15,7 +15,7 @@ class StoreFactory extends Factory
     {
         return [
             'address' => $this->faker->streetAddress(),
-            'district' => $this->faker->numberBetween(1, 11),
+            'district' => $this->faker->numberBetween(1, 10),
         ];
     }
 }

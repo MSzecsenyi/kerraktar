@@ -16,7 +16,7 @@ class TakeOutUniqueItemResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'item_id' => $this->item()->id,
+            'alt_name' => $this->alt_name,
         ];
     }
 }

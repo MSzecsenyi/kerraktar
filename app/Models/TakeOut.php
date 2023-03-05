@@ -19,7 +19,7 @@ class TakeOut extends Model
 
     public function items()
     {
-        return $this->belongsToMany(Item::class);
+        return $this->belongsToMany(Item::class)->withPivot('amount')->withTimestamps();
     }
 
     public function uniqueItems()
