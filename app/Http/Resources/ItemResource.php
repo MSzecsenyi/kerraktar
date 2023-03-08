@@ -29,6 +29,9 @@ class ItemResource extends JsonResource
                 'is_unique' => $this->is_unique,
                 'in_store_amount' => $this->in_store_amount,
                 'unique_items' => UniqueItemResource::collection($this->uniqueItems),
+                'isSelected' => false,
+                'selected_amount' => 0,
+                'selected_unique_items' => []
                 // 'inavailable' => InavailableItemResource::collection($this->requests)
             ];
         } else {
@@ -46,6 +49,9 @@ class ItemResource extends JsonResource
                 'is_unique' => $this->is_unique,
                 'in_store_amount' => $this->in_store_amount,
                 'unique_items' => [],
+                'isSelected' => false,
+                'selected_amount' => 0,
+                'selected_unique_items' => []
                 // 'inavailable' => InavailableItemResource::collection($this->requests)
             ];
         }
