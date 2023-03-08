@@ -26,6 +26,8 @@ class CreateItemsTable extends Migration
             $table->boolean('is_unique')->default(false);
             $table->integer('in_store_amount')->default(1);
             $table->softDeletes();
+
+            $table->index('store_id');
         });
     }
 
