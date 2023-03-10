@@ -30,7 +30,7 @@ class ItemResource extends JsonResource
                 'in_store_amount' => $this->in_store_amount,
                 'unique_items' => UniqueItemResource::collection($this->uniqueItems),
                 'isSelected' => false,
-                'selected_amount' => 1,
+                'selected_amount' => 0,
                 'selected_unique_items' => []
                 // 'inavailable' => InavailableItemResource::collection($this->requests)
             ];
