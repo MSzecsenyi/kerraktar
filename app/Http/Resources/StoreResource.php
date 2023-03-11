@@ -14,9 +14,8 @@ class StoreResource extends JsonResource
      */
     public function toArray($request)
     {
-        return[
+        return [
             'address' => $this->address,
-            'district' => $this->district,
         ];
     }
 }
