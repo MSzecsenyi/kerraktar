@@ -26,12 +26,9 @@ class TakeOutController extends Controller
         $user_id = json_decode($request->group_id);
         $only_current = json_decode($request->only_current);
 
-        $takeOuts = TakeOut::when($store_id, function ($query, $store_id) {
-            return $query->whereIn('category_id', $store_id);
+        $takeOuts = TakeOut::when($user_id, function ($query, $user_id) {
+            return $query->whereIn('user_id', $user_id);
         })
-            ->when($user_id, function ($query, $user_id) {
-                return $query->whereIn('user_id', $user_id);
-            })
             ->when($store_id, function ($query, $store_id) {
                 return $query->whereIn('store_id', $store_id);
             })
