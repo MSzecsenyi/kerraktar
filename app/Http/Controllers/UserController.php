@@ -54,7 +54,7 @@ class UserController extends Controller
         $response = [
             'user' => auth()->user(),
             'token' => $request->bearerToken(),
-            'stores' => StoreResource::collection(auth()->user->stores()->get())
+            'stores' => StoreResource::collection(auth()->user()->stores()->get())
         ];
 
         return response()->json($response, 200);
