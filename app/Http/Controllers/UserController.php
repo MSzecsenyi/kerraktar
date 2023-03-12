@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StoreResource;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\Store;
@@ -191,7 +192,8 @@ class UserController extends Controller
 
         $response = [
             'user' => $user,
-            'token' => $token
+            'token' => $token,
+            'stores' => StoreResource::collection($user->stores()->get())
         ];
 
         return response()->json($response, 200);
