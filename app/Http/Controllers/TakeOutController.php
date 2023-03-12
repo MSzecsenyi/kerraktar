@@ -14,7 +14,31 @@ class TakeOutController extends Controller
 {
     public function index(Request $request)
     {
-        if (!auth()->user()->is_storekeeper && !auth()->user()->is_group) {
+        $user = auth()->user();
+        if ($user->is_storekeeper) {
+            // $store_id = json_decode($request->store_id);
+            // $user_id = json_decode($request->group_id);
+            // $only_current = json_decode($request->only_current);
+
+            // $takeOuts = TakeOut::when($user_id, function ($query, $user_id) {
+            //     return $query->whereIn('user_id', $user_id);
+            // })
+            //     ->when($store_id, function ($query, $store_id) {
+            //         return $query->whereIn('store_id', $store_id);
+            //     })
+            //     ->when($only_current, function ($query) {
+            //         return $query->where('end_date', null);
+            //     })
+            //     ->get();
+            $storeIds = $user->stores->pluck('id');
+            $takeOuts = TakeOut::whereIn('store_id', $storeIds)->get();
+
+            return response()->json($takeOuts, 200);
+        } else if ($user->is_group) {
+            $takeOuts = $user->takeOuts;
+
+            return response()->json($takeOuts, 200);
+        } else {
             return response()->json("Unauthorized request", 401);
         }
 
@@ -22,22 +46,7 @@ class TakeOutController extends Controller
         // select takeouts made from a specific store
         // select takeouts made by a specific user
         // display all / active takeouts
-        $store_id = json_decode($request->store_id);
-        $user_id = json_decode($request->group_id);
-        $only_current = json_decode($request->only_current);
 
-        $takeOuts = TakeOut::when($user_id, function ($query, $user_id) {
-            return $query->whereIn('user_id', $user_id);
-        })
-            ->when($store_id, function ($query, $store_id) {
-                return $query->whereIn('store_id', $store_id);
-            })
-            ->when($only_current, function ($query) {
-                return $query->where('end_date', null);
-            })
-            ->get();
-
-        return response()->json($takeOuts, 200);
     }
 
     public function create(Request $request)
