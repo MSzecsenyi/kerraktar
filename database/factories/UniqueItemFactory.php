@@ -16,11 +16,9 @@ class UniqueItemFactory extends Factory
      */
     public function definition()
     {
-        echo ('.');
         return [
             'alt_name' => $this->faker->word(),
             // 'is_usable' => $this->faker->optional($weight = 0.8, $default = false)->boolean(),
-            // 'hehe' => 'hehe'
         ];
     }
 }

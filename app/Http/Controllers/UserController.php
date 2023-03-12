@@ -51,10 +51,19 @@ class UserController extends Controller
 
     public function check(Request $request)
     {
+        $user = auth()->user();
+
+        $stores = [];
+        if ($user->is_storekeeper) {
+            $stores = $user->stores()->get();
+        } else {
+            $stores = Store::where('district', $user->district)->get();
+        }
+
         $response = [
             'user' => auth()->user(),
             'token' => $request->bearerToken(),
-            'stores' => StoreResource::collection(auth()->user()->stores()->get())
+            'stores' => StoreResource::collection($stores)
         ];
 
         return response()->json($response, 200);
@@ -191,10 +200,20 @@ class UserController extends Controller
 
         $token = $user->createToken('kerraktarToken')->plainTextToken;
 
+
+        $stores = [];
+        if ($user->is_storekeeper) {
+            $stores = $user->stores()->get();
+        } else {
+            $stores = Store::where('district', $user->district)->get();
+        }
+
+        error_log($stores);
+
         $response = [
             'user' => $user,
             'token' => $token,
-            'stores' => StoreResource::collection($user->stores()->get())
+            'stores' => StoreResource::collection($stores)
         ];
 
         return response()->json($response, 200);
