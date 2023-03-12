@@ -19,11 +19,11 @@ class TakeOutController extends Controller
             $storeIds = $user->stores->pluck('id');
             $takeOuts = TakeOut::whereIn('store_id', $storeIds)->get();
 
-            return response()->json($takeOuts, 200);
+            return TakeOutResource::collection($takeOuts);
         } else if ($user->is_group) {
             $takeOuts = $user->takeOuts;
 
-            return response()->json($takeOuts, 200);
+            return TakeOutResource::collection($takeOuts);
         } else {
             return response()->json("Unauthorized request", 401);
         }
