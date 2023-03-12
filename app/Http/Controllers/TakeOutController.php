@@ -16,20 +16,6 @@ class TakeOutController extends Controller
     {
         $user = auth()->user();
         if ($user->is_storekeeper) {
-            // $store_id = json_decode($request->store_id);
-            // $user_id = json_decode($request->group_id);
-            // $only_current = json_decode($request->only_current);
-
-            // $takeOuts = TakeOut::when($user_id, function ($query, $user_id) {
-            //     return $query->whereIn('user_id', $user_id);
-            // })
-            //     ->when($store_id, function ($query, $store_id) {
-            //         return $query->whereIn('store_id', $store_id);
-            //     })
-            //     ->when($only_current, function ($query) {
-            //         return $query->where('end_date', null);
-            //     })
-            //     ->get();
             $storeIds = $user->stores->pluck('id');
             $takeOuts = TakeOut::whereIn('store_id', $storeIds)->get();
 
@@ -41,12 +27,6 @@ class TakeOutController extends Controller
         } else {
             return response()->json("Unauthorized request", 401);
         }
-
-        // Request options:
-        // select takeouts made from a specific store
-        // select takeouts made by a specific user
-        // display all / active takeouts
-
     }
 
     public function create(Request $request)
