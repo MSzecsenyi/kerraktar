@@ -20,7 +20,7 @@ class TakeOutResource extends JsonResource
             'end_date' => $this->end_date,
             'take_out_name' => $this->take_out_name,
             'user' => $this->user->group_number,
-            'store' => $this->store_id,
+            'store' => $this->store->address,
             // 'items' => TakeOutItemResource::collection($this->items),
         ];
     }
