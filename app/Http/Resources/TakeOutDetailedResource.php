@@ -15,12 +15,6 @@ class TakeOutDetailedResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'start_date' => $this->start_date,
-            'end_date' => $this->end_date,
-            'take_out_name' => $this->take_out_name,
-            'user' => $this->user->group_number,
-            'store' => $this->store->address,
             'items' => TakeOutItemResource::collection($this->items),
         ];
     }
