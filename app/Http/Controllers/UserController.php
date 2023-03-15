@@ -208,8 +208,6 @@ class UserController extends Controller
             $stores = Store::where('district', $user->district)->get();
         }
 
-        error_log($stores);
-
         $response = [
             'user' => $user,
             'token' => $token,

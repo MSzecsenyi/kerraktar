@@ -48,7 +48,6 @@ class TakeOutController extends Controller
             $newTakeout->items()->attach([
                 $item['id'] => ['amount' => $item['amount']]
             ]);
-            error_log($item['amount']);
         }
 
         foreach ($request->uniqueItems as $uniqueItem) {
