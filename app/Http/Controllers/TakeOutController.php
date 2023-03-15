@@ -80,7 +80,7 @@ class TakeOutController extends Controller
 
     public function show(TakeOut $takeOut)
     {
-        if (!auth()->user()->is_group && !auth()->user()->is_group) {
+        if (!auth()->user()->is_group && !auth()->user()->is_storekeeper) {
             return response()->json("Unauthorized request", 401);
         }
 
