@@ -36,6 +36,7 @@ class TakeOutItemResource extends JsonResource
             return [
                 'id' => $this->id,
                 'name' => $this->item_name,
+                'amount' => count($uniqueItems),
                 'unique_items' => TakeOutUniqueItemResource::collection($uniqueItems),
             ];
         }

@@ -14,8 +14,6 @@ class TakeOutDetailedResource extends JsonResource
      */
     public function toArray($request)
     {
-        return [
-            'items' => TakeOutItemResource::collection($this->items),
-        ];
+        return TakeOutItemResource::collection($this->items);
     }
 }
