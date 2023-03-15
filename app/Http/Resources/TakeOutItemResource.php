@@ -23,6 +23,7 @@ class TakeOutItemResource extends JsonResource
                 'name' => $this->item_name,
                 'amount' => $this->pivot->amount,
                 'unique_items' => [],
+                'is_checked' => false,
             ];
         } else {
             $uniqueItemIds = $this->uniqueItems()
@@ -38,6 +39,7 @@ class TakeOutItemResource extends JsonResource
                 'name' => $this->item_name,
                 'amount' => count($uniqueItems),
                 'unique_items' => TakeOutUniqueItemResource::collection($uniqueItems),
+                'is_checked' => false,
             ];
         }
     }
