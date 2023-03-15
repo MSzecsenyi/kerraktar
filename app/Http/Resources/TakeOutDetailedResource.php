@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TakeOutResource extends JsonResource
+class TakeOutDetailedResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,6 +21,7 @@ class TakeOutResource extends JsonResource
             'take_out_name' => $this->take_out_name,
             'user' => $this->user->group_number,
             'store' => $this->store->address,
+            'items' => TakeOutItemResource::collection($this->items),
         ];
     }
 }

@@ -20,7 +20,9 @@ class TakeOutItemResource extends JsonResource
         if ($this->pivot->amount != -1) {
             return [
                 'id' => $this->id,
+                'name' => $this->item_name,
                 'amount' => $this->pivot->amount,
+                'unique_items' => [],
             ];
         } else {
             $uniqueItemIds = $this->uniqueItems()
@@ -33,6 +35,7 @@ class TakeOutItemResource extends JsonResource
 
             return [
                 'id' => $this->id,
+                'name' => $this->item_name,
                 'unique_items' => TakeOutUniqueItemResource::collection($uniqueItems),
             ];
         }

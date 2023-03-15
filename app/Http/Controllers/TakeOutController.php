@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\TakeOutDetailedResource;
 use App\Http\Resources\TakeOutResource;
 use App\Models\Item;
 use App\Models\TakeOut;
@@ -47,10 +48,12 @@ class TakeOutController extends Controller
             $newTakeout->items()->attach([
                 $item['id'] => ['amount' => $item['amount']]
             ]);
+            error_log($item['amount']);
         }
 
         foreach ($request->uniqueItems as $uniqueItem) {
 
+            $item = UniqueItem::find($uniqueItem)->item;
             $newTakeout->items()->syncWithoutDetaching([
                 $item['id'] => ['amount' => -1]
             ]);
@@ -81,6 +84,6 @@ class TakeOutController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
-        return response()->json(new TakeOutResource($takeOut), 200);
+        return response()->json(new TakeOutDetailedResource($takeOut), 200);
     }
 }

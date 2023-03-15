@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         User::where('is_storekeeper', '=', 'true')->each(function ($user) use ($stores) {
             $stores = Store::where('district', $user->district)->get();
             $user->stores()->attach(
-                $stores->random(rand(1, 2))->pluck('id')->toArray()
+                $stores->random(rand(1, count($stores)))->pluck('id')->toArray()
             );
         });
     }
