@@ -16,7 +16,7 @@ class RequestResource extends JsonResource
     public function toArray($request)
     {
 
-        $is_problematic = false;
+        $is_conflicted = false;
         if ($this->start_date < new DateTime())
             foreach ($this->items as $item) {
                 $itemRequest = $item->requests()
@@ -32,7 +32,7 @@ class RequestResource extends JsonResource
                     ->groupBy('item_id', 'item_request.request_id', 'item_request.amount')
                     ->first();
 
-                if ($itemRequest->amount > $item->amount) $is_problematic = true;
+                if ($itemRequest->amount > $item->amount) $is_conflicted = true;
             }
 
         return [
@@ -40,7 +40,7 @@ class RequestResource extends JsonResource
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'request_name' => $this->request_name,
-            'is_problematic' => $is_problematic
+            'is_conflicted' => $is_conflicted
             // 'items' => $this->items->pluck('id'),
         ];
     }
