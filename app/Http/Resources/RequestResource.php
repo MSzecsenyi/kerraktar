@@ -39,7 +39,6 @@ class RequestResource extends JsonResource
             'id' => $this->id,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'accepted' => $this->accepted,
             'request_name' => $this->request_name,
             'is_problematic' => $is_problematic
             // 'items' => $this->items->pluck('id'),
