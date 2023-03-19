@@ -9,50 +9,43 @@ use Illuminate\Http\Request as RouteRequest;
 
 class RequestController extends Controller
 {
-    public function store(RouteRequest $req)
+    public function create(RouteRequest $req)
     {
-        User::findOrFail($req->user_id)->where('is_group', true)->get();
+        if (!auth()->user()->is_storekeeper && !auth()->user()->is_group) {
+            return response()->json("Unauthorized request", 401);
+        }
 
         $newRequest = Request::create([
-            'user_id'       => $req->user_id,
+            'user_id'       => auth()->user()->id,
             'start_date'    => $req->start_date,
             'end_date'      => $req->end_date,
             'store_id'      => $req->store_id,
+            'request_name'  => $req->request_name,
         ]);
 
-        $itemIds = $req->itemIds;
-        $newRequest->items()->sync($itemIds);
+
+        foreach ($req->items as $item) {
+            $newRequest->items()->attach([
+                $item['id'] => ['amount' => $item['amount']]
+            ]);
+        }
+
         return response()->json($newRequest, 201);
     }
 
-    public function acceptRequest(RouteRequest $req, Request $request)
+    public function index()
     {
-        $request->accepted = $req->accepted;
-        $request->save();
-        return response()->json($request, 200);
-    }
+        $user = auth()->user();
+        if ($user->is_storekeeper) {
+            $storeIds = $user->stores->pluck('id');
+            $requests = Request::whereIn('store_id', $storeIds)->get();
+        } else if ($user->is_group) {
+            $requests = $user->requests;
+        } else {
+            return response()->json("Unauthorized request", 401);
+        }
 
-    public function index(RouteRequest $req)
-    {
-        //TODO WIP
-        // if(auth()->user()->is_storekeeper){
-        //     $stores = auth()->user()->stores()->get();
-        //     $requests = new Collection();
-        //     foreach($stores as $store){
-        //         $requests = $requests->merge($store->requests()->get());
-        //     }
-        //     return RequestResource::collection($requests);
-        // }
-        // elseif(auth()->user()->is_group){
-        //     return RequestResource::collection(auth()->user()->requests()->get());
-        // }
-        // else{
-        //     return response()->json("Unauthorized request", 401);
-        // }
-
-
-
-        return RequestResource::collection(Request::all());
+        return RequestResource::collection($requests);
     }
 
     public function show(Request $request)
@@ -68,18 +61,5 @@ class RequestController extends Controller
         $itemIds = $req->itemIds;
         $request->items()->sync($itemIds);
         return response()->json(new RequestResource($request, 200));
-    }
-
-    public function takeout(Request $request)
-    {
-        $request->is_out = true;
-        $request->save();
-    }
-
-    public function giveback(Request $request)
-    {
-        $request->is_out = false;
-        $request->is_completed = true;
-        $request->save();
     }
 }

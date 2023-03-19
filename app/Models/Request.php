@@ -14,11 +14,12 @@ class Request extends Model
         'end_date',
         'user_id',
         'store_id',
+        'request_name',
     ];
 
     public function items()
     {
-        return $this->belongsToMany(Item::class);
+        return $this->belongsToMany(Item::class)->withPivot('amount');
     }
 
     public function uniqueItems()

@@ -18,6 +18,7 @@ class CreateRequestsTable extends Migration
             $table->timestamps();
             $table->date('start_date');
             $table->date('end_date');
+            $table->string('request_name');
             $table->foreignId('user_id')->constrained();
             $table->foreignId('store_id')->constrained();
             $table->softDeletes();

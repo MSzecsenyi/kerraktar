@@ -18,10 +18,8 @@ class CreateItemRequestTable extends Migration
             $table->timestamps();
             $table->foreignId('request_id')->constrained();
             $table->foreignId('item_id')->constrained();
-            $table->string('notes_added')->nullable();
+            $table->integer('amount');
         });
-
-
     }
 
     /**

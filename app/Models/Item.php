@@ -33,7 +33,7 @@ class Item extends Model
 
     public function requests()
     {
-        return $this->belongsToMany(Request::class);
+        return $this->belongsToMany(Request::class)->withPivot('amount');
     }
 
     public function takeOuts()

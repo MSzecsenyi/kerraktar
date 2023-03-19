@@ -54,6 +54,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     //REQUEST management endpoints
     Route::get('requests',                                   [RequestController::class, 'index']);
+    Route::post('requests',                                  [RequestController::class, 'create']);
+    Route::get('requests/{request}',                         [RequestController::class, 'show']);
+    Route::put('requests/{request}',                         [RequestController::class, 'update']);
 
     //TAKEOUT management endpoints
     Route::post('takeouts',                                  [TakeOutController::class, 'create']);
@@ -62,18 +65,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('takeouts/{takeOut}',                         [TakeOutController::class, 'returnTakeOut']);
 });
 
-
-
 //Public routes
-
 //USER management endpoints
 Route::post('login',                                       [UserController::class, 'login']);
-
-//REQUEST management endpoints
-Route::post('requests',                                    [RequestController::class, 'store']);
-Route::put('accept-requests/{request}',                   [RequestController::class, 'acceptRequest']);
-Route::get('requests/{request}',                          [RequestController::class, 'show']);
-Route::put('requests/{request}',                          [RequestController::class, 'update']);
-
-Route::put('takeout/{request}',                           [RequestController::class, 'takeout']);
-Route::put('giveback/{request}',                          [RequestController::class, 'giveback']);
