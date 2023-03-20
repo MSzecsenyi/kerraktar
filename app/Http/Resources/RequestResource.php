@@ -39,7 +39,7 @@ class RequestResource extends JsonResource
             'id' => $this->id,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
-            'user' => $this->user->user->group_number,
+            'user' => $this->user->group_number,
             'store' => $this->store->address,
             'request_name' => $this->request_name,
             'is_conflicted' => $is_conflicted
