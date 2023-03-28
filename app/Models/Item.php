@@ -31,9 +31,24 @@ class Item extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function requests()
+    public function requests($startDate = null, $endDate = null)
     {
-        return $this->belongsToMany(Request::class)->withPivot('amount');
+        $query = $this->belongsToMany(Request::class)->withPivot('amount');
+
+        if ($startDate && $endDate) {
+            $query->where(function($query) use ($startDate, $endDate) {
+                $query->where('start_date', '>=', $startDate)
+                    ->where('start_date', '<=', $endDate)
+                    ->orWhere('end_date', '>=', $startDate)
+                    ->where('end_date', '<=', $endDate)
+                    ->orWhere(function($query) use ($startDate, $endDate) {
+                        $query->where('start_date', '<', $startDate)
+                                ->where('end_date', '>', $endDate);
+                    });
+            });
+        }
+
+        return $query->get();
     }
 
     public function takeOuts()
