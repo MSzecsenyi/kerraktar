@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class InavailableItemResource extends JsonResource
+class OtherRequestsForItemResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,7 +16,9 @@ class InavailableItemResource extends JsonResource
     {
         return [
             'start_date' => $this->start_date,
-            'end_date' => $this->end_date
+            'end_date' => $this->end_date,
+            'amount' => $this->pivot->amount,
+            'user' => $this->user->group_number,
         ];
     }
 }

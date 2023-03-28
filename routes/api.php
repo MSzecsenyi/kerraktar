@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     //ITEM management endpoints
     Route::get('items',                                      [ItemController::class, 'index']);
+    Route::get('request_items',                                      [ItemController::class, 'index_for_requests']);
     Route::post('itemlist',                                  [ItemController::class, 'show']);
     Route::post('items',                                     [ItemController::class, 'store']);
     Route::put('items/{item}',                               [ItemController::class, 'update']);

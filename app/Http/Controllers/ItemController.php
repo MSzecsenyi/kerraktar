@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ItemResource;
+use App\Http\Resources\ItemRequestResource;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Store;
@@ -41,6 +42,34 @@ class ItemController extends Controller
         // ->paginate(20);
 
         return ItemResource::collection($items);
+    }
+
+    public function index_for_requests(Request $request)
+    {
+        if (!auth()->user()->is_storekeeper && !auth()->user()->is_group) {
+            return response()->json("Unauthorized request", 401);
+        }
+
+        $category_id = json_decode($request->category_id);
+        $district = json_decode($request->district);
+        $store_id = json_decode($request->store_id);
+        $item_name = $request->item_name;
+
+        $items = Item::when($category_id, function ($query, $category_id) {
+            return $query->whereIn('category_id', $category_id);
+        })
+            ->when($district, function ($query, $district) {
+                return $query->whereIn('district', $district);
+            })
+            ->when($store_id, function ($query, $store_id) {
+                return $query->whereIn('store_id', $store_id);
+            })
+            ->when($item_name, function ($query, $item_name) {
+                return $query->where('item_name', 'like', '%' . $item_name . '%');
+            })->get();
+        // ->paginate(20);
+
+        return ItemRequestResource::collection($items, $request->startDate, $request->endDate);
     }
 
     /**
