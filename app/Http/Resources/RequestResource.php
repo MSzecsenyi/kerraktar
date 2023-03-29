@@ -4,6 +4,9 @@ namespace App\Http\Resources;
 
 use DateTime;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\DB;
+use App\Models\Request;
+use Carbon\Carbon;
 
 class RequestResource extends JsonResource
 {
@@ -17,23 +20,28 @@ class RequestResource extends JsonResource
     {
 
         $is_conflicted = false;
-        if ($this->start_date < new DateTime())
-            foreach ($this->items as $item) {
-                $itemRequest = $item->requests()
-                    ->where(function ($query) {
-                        $query->whereBetween('start_date', [$this->start_date, $this->end_date])
-                            ->orWhereBetween('end_date', [$this->start_date, $this->end_date])
-                            ->orWhere(function ($query) {
-                                $query->whereDate('start_date', '<', $this->start_date)
-                                    ->whereDate('end_date', '>', $this->end_date);
-                            });
-                    })
-                    ->selectRaw('SUM(amount) as amount')
-                    ->groupBy('item_id', 'item_request.request_id', 'item_request.amount')
-                    ->first();
+        $currentDate = Carbon::parse($this->start_date);
+        $endDate = Carbon::parse($this->end_date);
+        if ($currentDate->gte(now()->modify('-3 days'))){
+            while($currentDate->lte($endDate) && !$is_conflicted){
+            $items = $this->items()->pluck('item_id')->toArray();
+            // Query all requests that are active on the current day
+            $conflictingRequests = Request::where('start_date', '<=', $currentDate)
+                ->where('end_date', '>=', $currentDate)
+                ->pluck('id');
 
-                if ($itemRequest->amount > $item->amount) $is_conflicted = true;
+            foreach($this->items as $item){
+                $itemAmount = DB::table('item_request')
+                    ->whereIn('request_id', $conflictingRequests)
+                    ->where('item_id', $item->id)
+                    ->sum('amount');
+
+                if($itemAmount > $item->amount) $is_conflicted = true;
             }
+            $currentDate->modify('+1 day');
+        }
+        }
+        
 
         return [
             'id' => $this->id,
@@ -43,7 +51,6 @@ class RequestResource extends JsonResource
             'store' => $this->store->address,
             'request_name' => $this->request_name,
             'is_conflicted' => $is_conflicted
-            // 'items' => $this->items->pluck('id'),
         ];
     }
 }

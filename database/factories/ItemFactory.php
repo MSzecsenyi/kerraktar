@@ -29,7 +29,7 @@ class ItemFactory extends Factory
             'amount' => $amount,
             'comment' => $this->faker->text(50),
             'is_unique' => $this->faker->optional($weight = 0.4, $default = false)->boolean(),
-            'in_store_amount' => $this->faker->numberBetween(1, $amount)
+            'in_store_amount' => $amount
         ];
     }
 }

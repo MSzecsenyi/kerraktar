@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\RequestResource;
+use App\Http\Resources\RequestDetailsResource;
 use App\Models\Request;
 use App\Models\User;
 use Illuminate\Http\Request as RouteRequest;
@@ -50,7 +51,7 @@ class RequestController extends Controller
 
     public function show(Request $request)
     {
-        return new RequestResource($request);
+        return new RequestDetailsResource($request);
     }
 
     public function update(RouteRequest $req, Request $request)

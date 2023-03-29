@@ -17,8 +17,6 @@ class ItemResource extends JsonResource
         if ($this->is_unique) {
             return [
                 'id' => $this->id,
-                // 'created_at' => $this->created_at,
-                // 'updated_at' => $this->updated_at,
                 'district' => $this->district,
                 'category' => $this->category->category_name,
                 'store' => $this->store_id,
@@ -32,13 +30,10 @@ class ItemResource extends JsonResource
                 'isSelected' => false,
                 'selected_amount' => 0,
                 'selected_unique_items' => []
-                // 'inavailable' => InavailableItemResource::collection($this->requests)
             ];
         } else {
             return [
                 'id' => $this->id,
-                // 'created_at' => $this->created_at,
-                // 'updated_at' => $this->updated_at,
                 'district' => $this->district,
                 'category' => $this->category->category_name,
                 'store' => $this->store_id,
@@ -52,7 +47,6 @@ class ItemResource extends JsonResource
                 'isSelected' => false,
                 'selected_amount' => 1,
                 'selected_unique_items' => []
-                // 'inavailable' => InavailableItemResource::collection($this->requests)
             ];
         }
     }
