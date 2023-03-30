@@ -19,14 +19,15 @@ class RequestDetailsItemsResource extends JsonResource
     {
         error_log(self::$requestId);
         $attachedToRequest = Request::find(self::$requestId);
+        $isSelected = $attachedToRequest->items->contains($this->id);
         return [
             'id' => $this->id,
             'category' => $this->category->category_name,
             'item_name' => $this->item_name,
             'amount' => $this->amount,
-            'isSelected' => $attachedToRequest->items->contains($this->id),
+            'is_selected' => $isSelected,
             'selected_amount' => 0,
-            'other_requests' => OtherRequestsForItemResource::collection($this->requests($attachedToRequest->start_date, $attachedToRequest->end_date))
+            'other_requests' => $isSelected ? OtherRequestsForItemResource::collection($this->requests($attachedToRequest->start_date, $attachedToRequest->end_date)) : [],
         ];
     }
 }
