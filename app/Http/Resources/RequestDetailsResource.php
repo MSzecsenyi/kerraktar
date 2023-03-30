@@ -16,6 +16,7 @@ class RequestDetailsResource extends JsonResource
      */
     public function toArray($request)
     {
+        $parentRequestId = 2;
         return [
             'id' => $this->id,
             'start_date' => $this->start_date,
@@ -23,8 +24,7 @@ class RequestDetailsResource extends JsonResource
             'user' => $this->user->group_number,
             'store' => $this->store->address,
             'request_name' => $this->request_name,
-            'is_conflicted' => false,
-            'items' => RequestDetailsItemsResource::collection($this->store->items, $this->id, $this->start_date, $this->end_date),
+            'items' => RequestDetailsItemsResource::customCollection($this->store->items, $parentRequestId),
         ];
     }
 }
