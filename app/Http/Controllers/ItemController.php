@@ -69,7 +69,7 @@ class ItemController extends Controller
             })->get();
         // ->paginate(20);
 
-        return ItemRequestResource::collection($items, $request->startDate, $request->endDate);
+        return ItemRequestResource::customCollection($items, $request->startDate, $request->endDate);
     }
 
     /**

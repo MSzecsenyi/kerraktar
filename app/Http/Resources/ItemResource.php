@@ -17,13 +17,9 @@ class ItemResource extends JsonResource
         if ($this->is_unique) {
             return [
                 'id' => $this->id,
-                'district' => $this->district,
                 'category' => $this->category->category_name,
-                'store' => $this->store_id,
-                'owner' => $this->owner,
                 'item_name' => $this->item_name,
                 'amount' => $this->amount,
-                'comment' => $this->comment,
                 'is_unique' => $this->is_unique,
                 'in_store_amount' => $this->in_store_amount,
                 'unique_items' => UniqueItemResource::collection($this->uniqueItems),
@@ -34,13 +30,9 @@ class ItemResource extends JsonResource
         } else {
             return [
                 'id' => $this->id,
-                'district' => $this->district,
                 'category' => $this->category->category_name,
-                'store' => $this->store_id,
-                'owner' => $this->owner,
                 'item_name' => $this->item_name,
                 'amount' => $this->amount,
-                'comment' => $this->comment,
                 'is_unique' => $this->is_unique,
                 'in_store_amount' => $this->in_store_amount,
                 'unique_items' => [],
