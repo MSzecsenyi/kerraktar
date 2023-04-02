@@ -31,7 +31,7 @@ class ItemRequestResource extends JsonResource
             'amount' => $this->amount,
             'in_store_amount' => $this->in_store_amount,
             'isSelected' => false,
-            'selected_amount' => 0,
+            'selected_amount' => 1,
             'other_requests' => OtherRequestsForItemResource::collection($this->requests(self::$startDate, self::$endDate))
         ];
     }
