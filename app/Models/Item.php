@@ -31,11 +31,10 @@ class Item extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function requests($startDate = null, $endDate = null)
+    public function requests($startDate = null, $endDate = null, $requestId = null)
     {
         $query = $this->belongsToMany(Request::class)->withPivot('amount');
         if ($startDate && $endDate) {
-            error_log($query->count());
             $query->where(function($query) use ($startDate, $endDate) {
                 $query->where('start_date', '>=', $startDate)
                     ->where('start_date', '<=', $endDate)
@@ -46,10 +45,10 @@ class Item extends Model
                                 ->where('end_date', '>', $endDate);
                     });
             });
-            
-            error_log($query->count());
         }
-
+        if($requestId){
+            $query->where('requests.id','!=',$requestId);
+        } 
         return $query->get();
     }
 

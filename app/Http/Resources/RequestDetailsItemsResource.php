@@ -17,17 +17,18 @@ class RequestDetailsItemsResource extends JsonResource
 
     public function toArray($request)
     {
-        error_log(self::$requestId);
         $attachedToRequest = Request::find(self::$requestId);
         $isSelected = $attachedToRequest->items->contains($this->id);
+        $selectedAmount = $isSelected ? $attachedToRequest->items->where('id', $this->id)->first()->pivot->amount : 1;
+
         return [
             'id' => $this->id,
             'category' => $this->category->category_name,
             'item_name' => $this->item_name,
             'amount' => $this->amount,
             'is_selected' => $isSelected,
-            'selected_amount' => 0,
-            'other_requests' => $isSelected ? OtherRequestsForItemResource::collection($this->requests($attachedToRequest->start_date, $attachedToRequest->end_date)) : [],
+            'selected_amount' => $selectedAmount,
+            'other_requests' => OtherRequestsForItemResource::collection($this->requests($attachedToRequest->start_date, $attachedToRequest->end_date, self::$requestId)),
         ];
     }
 }
