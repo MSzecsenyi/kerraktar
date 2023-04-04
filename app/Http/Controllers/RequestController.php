@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\RequestResource;
-use App\Http\Resources\RequestDetailsResource;
+use App\Http\Resources\RequestDetailsItemsResource;
 use App\Models\Request;
 use App\Models\User;
 use Illuminate\Http\Request as RouteRequest;
@@ -51,7 +51,7 @@ class RequestController extends Controller
 
     public function show(Request $request)
     {
-        return new RequestDetailsResource($request);
+        return RequestDetailsItemsResource::customCollection($request->store->items, $request->id);
     }
 
     public function update(RouteRequest $req, Request $request)
