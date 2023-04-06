@@ -12,7 +12,7 @@ class RequestController extends Controller
 {
     public function create(RouteRequest $req)
     {
-        if (!auth()->user()->is_storekeeper && !auth()->user()->is_group) {
+        if (!auth()->user()->is_group) {
             return response()->json("Unauthorized request", 401);
         }
 
@@ -56,11 +56,33 @@ class RequestController extends Controller
 
     public function update(RouteRequest $req, Request $request)
     {
-        User::findOrFail($request->user_id)->where('is_group', true)->get();
+        $user = auth()->user();
+        $request = Request::findOrFail($request->id);
+        if (($user->is_storekeeper && $user->district == $request->store->district) || ($user->is_group && $request->user->id == $user->id)) {
 
-        $request->update($req->all());
-        $itemIds = $req->itemIds;
-        $request->items()->sync($itemIds);
-        return response()->json(new RequestResource($request, 200));
+            $request->items()->detach();
+
+            foreach ($req->all() as $item) {
+                $request->items()->attach([$item['id'] => ['amount' => $item['amount']]]);
+            }
+
+            return response()->json($request, 200);
+        } else {
+            return response()->json("Unauthorized request", 401);
+        }
+    }
+
+    public function destroy(Request $request)
+    {
+        $user = auth()->user();
+        $request = Request::findOrFail($request->id);
+
+        if (($user->is_storekeeper && $user->district == $request->store->district) || ($user->is_group && $request->user->id == $user->id)) {
+            $request->items()->detach();
+            $request->delete();
+            return response()->json("Request deleted successfully", 200);
+        } else {
+            return response()->json("Unauthorized request", 401);
+        }
     }
 }

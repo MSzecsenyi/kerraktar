@@ -33,36 +33,37 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('itemlist',                                  [ItemController::class, 'show']);
     Route::post('items',                                     [ItemController::class, 'store']);
     Route::put('items/{item}',                               [ItemController::class, 'update']);
-    Route::delete('items/{item}',                            [ItemController::class, 'destroy']);
     Route::put('items-comment/{item}',                       [ItemController::class, 'updateComment']);
+    Route::delete('items/{item}',                            [ItemController::class, 'destroy']);
 
     //USER management endpoints
     Route::get('users',                                      [UserController::class, 'index']);
     Route::get('users/{user}',                               [UserController::class, 'show']);
-    Route::post('users',                                     [UserController::class, 'store']);
-    Route::put('users/{user}',                               [UserController::class, 'update']);
-    Route::delete('users/{user}',                            [UserController::class, 'destroy']);
     Route::get('checkuser',                                  [UserController::class, 'check']);
+    Route::post('users',                                     [UserController::class, 'store']);
+    Route::delete('users/{user}',                            [UserController::class, 'destroy']);
+    Route::put('users/{user}',                               [UserController::class, 'update']);
 
     //STORE management endpoints
     Route::get('stores',                                     [StoreController::class, 'index']);
     Route::get('stores/{store}',                             [StoreController::class, 'show']);
     Route::post('stores',                                    [StoreController::class, 'store']);
-    Route::delete('stores/{store}',                          [StoreController::class, 'destroy']);
     Route::post('add-storekeeper',                           [StoreController::class, 'addStorekeeper']);
     Route::put('delete-storekeeper',                         [StoreController::class, 'deleteStorekeeper']);
     Route::put('migrate-items',                              [StoreController::class, 'migrateItems']);
+    Route::delete('stores/{store}',                          [StoreController::class, 'destroy']);
 
     //REQUEST management endpoints
     Route::get('requests',                                   [RequestController::class, 'index']);
-    Route::post('requests',                                  [RequestController::class, 'create']);
     Route::get('requests/{request}',                         [RequestController::class, 'show']);
+    Route::post('requests',                                  [RequestController::class, 'create']);
     Route::put('requests/{request}',                         [RequestController::class, 'update']);
+    Route::delete('requests/{request}',                      [RequestController::class, 'destroy']);
 
     //TAKEOUT management endpoints
-    Route::post('takeouts',                                  [TakeOutController::class, 'create']);
     Route::get('takeouts',                                   [TakeOutController::class, 'index']);
     Route::get('takeouts/{takeOut}',                         [TakeOutController::class, 'show']);
+    Route::post('takeouts',                                  [TakeOutController::class, 'create']);
     Route::put('takeouts/{takeOut}',                         [TakeOutController::class, 'returnTakeOut']);
 });
 
