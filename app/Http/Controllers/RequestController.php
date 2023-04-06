@@ -66,7 +66,7 @@ class RequestController extends Controller
                 $request->items()->attach([$item['id'] => ['amount' => $item['amount']]]);
             }
 
-            return response()->json($request, 200);
+            return RequestDetailsItemsResource::customCollection($request->store->items, $request->id);
         } else {
             return response()->json("Unauthorized request", 401);
         }
