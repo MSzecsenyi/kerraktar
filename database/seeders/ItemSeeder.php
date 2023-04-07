@@ -14,6 +14,10 @@ class ItemSeeder extends Seeder
      */
     public function run()
     {
+        Item::factory(10)->create([
+            'district' => 5,
+            'store_id' => 1,
+        ]);
         Item::factory(6000)->create();
     }
 }
