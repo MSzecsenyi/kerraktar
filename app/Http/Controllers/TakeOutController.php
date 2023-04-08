@@ -48,6 +48,8 @@ class TakeOutController extends Controller
             $newTakeout->items()->attach([
                 $item['id'] => ['amount' => $item['amount']]
             ]);
+            error_log($item['amount']);
+            Item::find($item['id'])->decrement('in_store_amount', $item['amount']);
         }
 
         foreach ($request->uniqueItems as $uniqueItem) {
@@ -71,13 +73,25 @@ class TakeOutController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
-        // $record = TakeOut::findOrFail($takeOut)->where('user_id', auth()->user()->id)->where('end_date', null);
         $takeOut->update(['end_date' => now()]);
+
+        foreach ($takeOut->items as $item) {
+            Item::find($item->id)->increment('in_store_amount', $item->pivot->amount);
+        }
 
         return response()->json($takeOut, 200);
     }
 
     public function show(TakeOut $takeOut)
+    {
+        if (!auth()->user()->is_group && !auth()->user()->is_storekeeper) {
+            return response()->json("Unauthorized request", 401);
+        }
+
+        return response()->json(new TakeOutDetailedResource($takeOut), 200);
+    }
+
+    public function showInStoreAmounts(TakeOut $takeOut)
     {
         if (!auth()->user()->is_group && !auth()->user()->is_storekeeper) {
             return response()->json("Unauthorized request", 401);
