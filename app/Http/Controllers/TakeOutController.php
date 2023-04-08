@@ -82,6 +82,10 @@ class TakeOutController extends Controller
             Item::find($item->id)->increment('in_store_amount', $item->pivot->amount);
         }
 
+        foreach ($takeOut->uniqueItems as $uniqueItem) {
+            $uniqueItem->update(['is_in_store' => true]);
+        }
+
         return response()->json($takeOut, 200);
     }
 
