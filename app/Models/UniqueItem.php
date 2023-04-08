@@ -11,7 +11,8 @@ class UniqueItem extends Model
 
     protected $fillable = [
         'is_usable',
-        'alt_name'
+        'alt_name',
+        'is_in_store'
     ];
 
     public $incrementing = false;

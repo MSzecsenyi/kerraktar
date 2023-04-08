@@ -54,13 +54,16 @@ class TakeOutController extends Controller
 
         foreach ($request->uniqueItems as $uniqueItem) {
 
-            $item = UniqueItem::find($uniqueItem)->item;
+            $uItem = UniqueItem::find($uniqueItem);
+            $item = $uItem->item;
             $newTakeout->items()->syncWithoutDetaching([
                 $item['id'] => ['amount' => -1]
             ]);
+            $item->decrement('in_store_amount', 1);
+            $uItem->update(['is_in_store' => false]);
 
             $newTakeout->uniqueItems()->attach(
-                $uniqueItem
+                $uItem
             );
         }
 

@@ -16,7 +16,8 @@ class UniqueItemResource extends JsonResource
     {
         return [
             'unique_id' => $this->id,
-            'alt_name' => $this->alt_name
+            'alt_name' => $this->alt_name,
+            'is_in_store' => $this->is_in_store,
         ];
     }
 }
