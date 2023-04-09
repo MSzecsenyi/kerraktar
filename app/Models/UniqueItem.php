@@ -10,9 +10,8 @@ class UniqueItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'is_usable',
         'alt_name',
-        'is_in_store'
+        'taken_out_by',
     ];
 
     public $incrementing = false;
@@ -30,5 +29,10 @@ class UniqueItem extends Model
     public function takeOuts()
     {
         return $this->belongsToMany(TakeOut::class);
+    }
+
+    public function takenOutBy()
+    {
+        return $this->belongsTo(User::class, 'taken_out_by');
     }
 }

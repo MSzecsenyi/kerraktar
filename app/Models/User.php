@@ -54,4 +54,9 @@ class User extends Authenticatable
     {
         return $this->is_storekeeper;
     }
+
+    public function takenOutUniqueItems()
+    {
+        return $this->hasMany(UniqueItem::class, 'taken_out_by');
+    }
 }

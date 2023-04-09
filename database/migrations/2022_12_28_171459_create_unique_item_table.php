@@ -19,8 +19,7 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignId('item_id')->constrained();
             $table->string('alt_name')->nullable();
-            $table->boolean('is_in_store')->default(true);
-            $table->boolean('is_usable')->default(true);
+            $table->foreignId('taken_out_by')->nullable()->constrained('users');
         });
     }
 

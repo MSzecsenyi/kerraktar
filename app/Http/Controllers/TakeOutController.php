@@ -48,7 +48,6 @@ class TakeOutController extends Controller
             $newTakeout->items()->attach([
                 $item['id'] => ['amount' => $item['amount']]
             ]);
-            error_log($item['amount']);
             Item::find($item['id'])->decrement('in_store_amount', $item['amount']);
         }
 
@@ -60,13 +59,15 @@ class TakeOutController extends Controller
                 $item['id'] => ['amount' => -1]
             ]);
             $item->decrement('in_store_amount', 1);
-            $uItem->update(['is_in_store' => false]);
+            error_log("hehe");
+
+            $uItem->taken_out_by = auth()->user()->id;
+            $uItem->save();
 
             $newTakeout->uniqueItems()->attach(
                 $uItem
             );
         }
-
         return response()->json($newTakeout, 201);
     }
 
@@ -83,7 +84,7 @@ class TakeOutController extends Controller
         }
 
         foreach ($takeOut->uniqueItems as $uniqueItem) {
-            $uniqueItem->update(['is_in_store' => true]);
+            $uniqueItem->update(['is_in_store' => null]);
         }
 
         return response()->json($takeOut, 200);
