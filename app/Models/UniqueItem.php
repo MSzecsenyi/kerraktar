@@ -12,6 +12,7 @@ class UniqueItem extends Model
     protected $fillable = [
         'alt_name',
         'taken_out_by',
+        'uuid',
     ];
 
     public $incrementing = false;

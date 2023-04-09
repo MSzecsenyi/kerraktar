@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->foreignId('take_out_id')->constrained();
-            $table->foreignUuid('unique_item_id')->constrained();
+            $table->foreignId('unique_item_id')->constrained();
             $table->string('notes_added')->nullable();
         });
     }

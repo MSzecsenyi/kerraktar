@@ -15,7 +15,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('unique_items', function (Blueprint $table) {
-            $table->uuid('id')->primary()->default(DB::raw('public.uuid_generate_v4()'));
+            $table->id();
+            $table->uuid('uuid')->default(DB::raw('public.uuid_generate_v4()'));
             $table->timestamps();
             $table->foreignId('item_id')->constrained();
             $table->string('alt_name')->nullable();

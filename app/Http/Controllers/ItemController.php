@@ -7,7 +7,10 @@ use App\Http\Resources\ItemRequestResource;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Store;
+use App\Models\UniqueItem;
 use Illuminate\Http\Request;
+use DB;
+use Illuminate\Validation\Rules\Unique;
 
 class ItemController extends Controller
 {
@@ -182,5 +185,11 @@ class ItemController extends Controller
         ]);
 
         return response()->json(new ItemResource($item), 200);
+    }
+
+    public function getUuids()
+    {
+        $uuids = UniqueItem::all()->pluck('uuid')->toArray();
+        return response()->json($uuids);
     }
 }
