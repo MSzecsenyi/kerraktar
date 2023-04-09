@@ -27,9 +27,12 @@ class DatabaseSeeder extends Seeder
 
         // Populate the pivot table
         User::where('is_storekeeper', '=', 'true')->each(function ($user) use ($stores) {
-            $stores = Store::where('district', $user->district)->get();
+            $stores = Store::where('district', $user->district)
+                ->where('id', '>', $user->id < 4 ? 1 : 0) // only stores with id > 1 for users with id < 3
+                ->get();
             $user->stores()->attach(
-                $stores->random(rand($user->id > 3 ? 1 : 2, count($stores)))->pluck('id')->toArray()
+                $stores->random(rand(1, count($stores)))
+                    ->pluck('id')->toArray()
             );
         });
     }
