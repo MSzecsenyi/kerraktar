@@ -4,21 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class Item extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
-        'district',
         'store_id',
-        'is_available',
-        'is_usable',
-        'comment',
         'amount',
         'category_id',
         'item_name',
         'in_store_amount',
+        'is_unique',
     ];
 
     public function store()
@@ -35,20 +35,20 @@ class Item extends Model
     {
         $query = $this->belongsToMany(Request::class)->withPivot('amount');
         if ($startDate && $endDate) {
-            $query->where(function($query) use ($startDate, $endDate) {
+            $query->where(function ($query) use ($startDate, $endDate) {
                 $query->where('start_date', '>=', $startDate)
                     ->where('start_date', '<=', $endDate)
                     ->orWhere('end_date', '>=', $startDate)
                     ->where('end_date', '<=', $endDate)
-                    ->orWhere(function($query) use ($startDate, $endDate) {
+                    ->orWhere(function ($query) use ($startDate, $endDate) {
                         $query->where('start_date', '<', $startDate)
-                                ->where('end_date', '>', $endDate);
+                            ->where('end_date', '>', $endDate);
                     });
             });
         }
-        if($requestId){
-            $query->where('requests.id','!=',$requestId);
-        } 
+        if ($requestId) {
+            $query->where('requests.id', '!=', $requestId);
+        }
         return $query->get();
     }
 

@@ -16,11 +16,12 @@ return new class extends Migration
     {
         Schema::create('unique_items', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->default(DB::raw('public.uuid_generate_v4()'));
+            $table->uuid('uuid')->default(DB::raw('public.uuid_generate_v4()'))->unique();
             $table->timestamps();
             $table->foreignId('item_id')->constrained();
             $table->string('alt_name')->nullable();
-            $table->foreignId('taken_out_by')->nullable()->constrained('users');
+            $table->foreignId('taken_out_by')->nullable();
+            $table->softDeletes();
         });
     }
 

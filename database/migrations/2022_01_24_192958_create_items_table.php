@@ -16,13 +16,10 @@ class CreateItemsTable extends Migration
         Schema::create('items', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->integer('district');
-            $table->foreignId('category_id')->onDelete('set null');
-            $table->foreignId('store_id')->onDelete('set null');
-            $table->string('owner')->nullable();
+            $table->foreignId('category_id')->onDelete('set null')->nullable();
+            $table->foreignId('store_id');
             $table->string('item_name');
             $table->integer('amount')->default(1);
-            $table->string('comment')->nullable();
             $table->boolean('is_unique')->default(false);
             $table->integer('in_store_amount')->default(1);
             $table->softDeletes();

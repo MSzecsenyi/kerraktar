@@ -18,6 +18,7 @@ class CreateStoresTable extends Migration
             $table->timestamps();
             $table->integer('district');
             $table->string('address')->nullable();
+            $table->softDeletes();
         });
     }
 

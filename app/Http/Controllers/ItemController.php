@@ -26,16 +26,12 @@ class ItemController extends Controller
         }
 
         $category_id = json_decode($request->category_id);
-        $district = json_decode($request->district);
         $store_id = json_decode($request->store_id);
         $item_name = $request->item_name;
 
         $items = Item::when($category_id, function ($query, $category_id) {
             return $query->whereIn('category_id', $category_id);
         })
-            ->when($district, function ($query, $district) {
-                return $query->whereIn('district', $district);
-            })
             ->when($store_id, function ($query, $store_id) {
                 return $query->whereIn('store_id', $store_id);
             })
@@ -54,16 +50,12 @@ class ItemController extends Controller
         }
 
         $category_id = json_decode($request->category_id);
-        $district = json_decode($request->district);
         $store_id = json_decode($request->store_id);
         $item_name = $request->item_name;
 
         $items = Item::when($category_id, function ($query, $category_id) {
             return $query->whereIn('category_id', $category_id);
         })
-            ->when($district, function ($query, $district) {
-                return $query->whereIn('district', $district);
-            })
             ->when($store_id, function ($query, $store_id) {
                 return $query->whereIn('store_id', $store_id);
             })
@@ -104,22 +96,22 @@ class ItemController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
-        $category_ids = Category::all()->pluck('id')->toArray();
-        $store_ids = Store::all()->pluck('id')->toArray();
-
-        $request->validate([
-            'district' => 'required|between:1,10||integer',
-            'category_id' => 'required|in:' . implode(",", $category_ids),
-            'store_id' => 'required|in:' . implode(",", $store_ids),
-            'is_available' => 'boolean|nullable',
-            'is_usable' => 'boolean|nullable',
-            'owner' => 'max:128|nullable',
-            'item_name' => 'required|max:128',
-            'amount' => 'integer|nullable',
-            'comment' => 'max:4096|nullable',
+        $item = Item::create([
+            'category_id' => $request->input('category_id'),
+            'store_id' => $request->input('store_id'),
+            'item_name' => $request->input('item_name'),
+            'amount' => $request->input('amount'),
+            'in_store_amount' => $request->input('amount'),
+            'is_unique' => $request->input('is_unique'),
         ]);
 
-        $item = Item::create($request->all());
+        if ($item->is_unique) {
+            foreach ($request->input('unique_items') as $uniqueItem) {
+                $newUniqueItem = new UniqueItem($uniqueItem);
+                $newUniqueItem->item()->associate($item);
+                $newUniqueItem->save();
+            }
+        }
 
         return response()->json(new ItemResource($item), 201);
     }
@@ -137,24 +129,46 @@ class ItemController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
-        $category_ids = Category::all()->pluck('id')->toArray();
-        $store_ids = Store::all()->pluck('id')->toArray();
-
-        $request->validate([
-            'district' => 'sometimes|between:1,10||integer',
-            'category_id' => 'sometimes|in:' . implode(",", $category_ids),
-            'store_id' => 'sometimes|in:' . implode(",", $store_ids),
-            'is_available' => 'sometimes|boolean',
-            'is_usable' => 'sometimes|boolean',
-            'owner' => 'sometimes|max:128',
-            'item_name' => 'sometimes|max:128',
-            'amount' => 'sometimes|integer',
-            'comment' => 'sometimes|max:4096',
+        $item = Item::findOrFail($request->input('id'));
+        $item->update([
+            'category_id' => $request->input('category_id'),
+            'item_name' => $request->input('item_name'),
+            'amount' => $request->input('amount'),
+            'in_store_amount' => $item->in_store_amount + $request->input('amount') - $item->amount,
+            'is_unique' => $request->input('is_unique'),
         ]);
 
-        $item->update($request->all());
+        $existingUniqueItems = $item->uniqueItems;
+        $requestUniqueItems = collect($request->input('unique_items'));
 
-        return response()->json(new ItemResource($item), 200);
+        // Get the IDs of the unique items in the request
+        $requestUniqueItemIds = $requestUniqueItems->pluck('id')->filter();
+
+        // Find the unique items in $existingUniqueItems that are not in $requestUniqueItems
+        $itemsToDelete = $existingUniqueItems->filter(function ($existingUniqueItem) use ($requestUniqueItemIds) {
+            return !$requestUniqueItemIds->contains($existingUniqueItem->id);
+        });
+
+        // Delete the found unique items
+        foreach ($itemsToDelete as $itemToDelete) {
+            $itemToDelete->delete();
+        }
+        if ($item->is_unique) {
+            foreach ($request->input('unique_items') as $uniqueItem) {
+                if ($uniqueItem['id']) {
+                    $existingUniqueItem = UniqueItem::findOrFail($uniqueItem['id']);
+                    $existingUniqueItem->update($uniqueItem);
+                } else {
+                    $newUniqueItem = new UniqueItem($uniqueItem);
+                    $newUniqueItem->item()->associate($item);
+                    $newUniqueItem->save();
+                }
+            }
+        }
+
+        $item = Item::findOrFail($request->input('id'));
+
+        return response()->json(new ItemResource($item), 201);
     }
 
     /**
@@ -169,6 +183,7 @@ class ItemController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
+        $item->uniqueItems()->delete();
         $item->delete();
 
         return response()->json(null, 204);

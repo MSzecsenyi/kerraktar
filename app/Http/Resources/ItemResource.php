@@ -17,7 +17,7 @@ class ItemResource extends JsonResource
         if ($this->is_unique) {
             return [
                 'id' => $this->id,
-                'category' => $this->category->category_name,
+                'category' => $this->category ? $this->category->category_name : "none",
                 'item_name' => $this->item_name,
                 'amount' => $this->amount,
                 'is_unique' => $this->is_unique,
@@ -30,7 +30,7 @@ class ItemResource extends JsonResource
         } else {
             return [
                 'id' => $this->id,
-                'category' => $this->category->category_name,
+                'category' => $this->category ? $this->category->category_name : "none",
                 'item_name' => $this->item_name,
                 'amount' => $this->amount,
                 'is_unique' => $this->is_unique,

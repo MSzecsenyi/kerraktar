@@ -15,7 +15,8 @@ class UniqueItemResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'unique_id' => $this->uuid,
+            'id' => $this->id,
+            'uuid' => $this->uuid,
             'alt_name' => $this->alt_name,
             'taken_out_by' => $this->takenOutBy ? $this->takenOutBy->group_number : -1,
         ];

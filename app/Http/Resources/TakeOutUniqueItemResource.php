@@ -15,7 +15,8 @@ class TakeOutUniqueItemResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->uuid,
+            'id' => $this->id,
+            'uuid' => $this->uuid,
             'alt_name' => $this->alt_name,
         ];
     }

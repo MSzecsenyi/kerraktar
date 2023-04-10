@@ -59,7 +59,6 @@ class TakeOutController extends Controller
                 $item['id'] => ['amount' => -1]
             ]);
             $item->decrement('in_store_amount', 1);
-            error_log("hehe");
 
             $uItem->taken_out_by = auth()->user()->id;
             $uItem->save();
