@@ -33,8 +33,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('uuids',                                      [ItemController::class, 'getUuids']);
     Route::post('itemlist',                                  [ItemController::class, 'show']);
     Route::post('items',                                     [ItemController::class, 'store']);
-    Route::put('items/{item}',                               [ItemController::class, 'update']);
-    Route::put('items-comment/{item}',                       [ItemController::class, 'updateComment']);
+    Route::put('items',                               [ItemController::class, 'update']);
     Route::delete('items/{item}',                            [ItemController::class, 'destroy']);
 
     //USER management endpoints
