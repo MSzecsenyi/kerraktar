@@ -24,16 +24,18 @@ use Illuminate\Support\Facades\Route;
 //Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
-    Route::post('logout',                                   [UserController::class, 'logout']);
-    Route::post('logoutall',                                [UserController::class, 'logoutAll']);
+    Route::post('logout',                                    [UserController::class, 'logout']);
+    Route::post('logoutall',                                 [UserController::class, 'logoutAll']);
 
     //ITEM management endpoints
     Route::get('items',                                      [ItemController::class, 'index']);
     Route::get('request_items',                              [ItemController::class, 'index_for_requests']);
+    Route::get('items/history/{item}',                       [ItemController::class, 'history']);
+    Route::get('items/uitem_history/{uniqueItem}',           [ItemController::class, 'uniqueItemHistory']);
     Route::get('uuids',                                      [ItemController::class, 'getUuids']);
     Route::post('itemlist',                                  [ItemController::class, 'show']);
     Route::post('items',                                     [ItemController::class, 'store']);
-    Route::put('items',                               [ItemController::class, 'update']);
+    Route::put('items',                                      [ItemController::class, 'update']);
     Route::delete('items/{item}',                            [ItemController::class, 'destroy']);
 
     //USER management endpoints

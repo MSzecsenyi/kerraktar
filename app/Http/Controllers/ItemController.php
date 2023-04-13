@@ -3,14 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ItemResource;
-use App\Http\Resources\ItemRequestResource;
-use App\Models\Category;
+use App\Http\Resources\RequestItemResource;
+use App\Http\Resources\ItemTakeOutResource;
+use App\Http\Resources\TakeOutResource;
 use App\Models\Item;
-use App\Models\Store;
 use App\Models\UniqueItem;
 use Illuminate\Http\Request;
-use DB;
-use Illuminate\Validation\Rules\Unique;
 
 class ItemController extends Controller
 {
@@ -64,7 +62,7 @@ class ItemController extends Controller
             })->get();
         // ->paginate(20);
 
-        return ItemRequestResource::customCollection($items, $request->startDate, $request->endDate);
+        return RequestItemResource::customCollection($items, $request->startDate, $request->endDate);
     }
 
     /**
@@ -189,22 +187,28 @@ class ItemController extends Controller
         return response()->json(null, 204);
     }
 
-    public function updateComment(Request $request, Item $item)
-    {
-        if (!auth()->user()->is_storekeeper && !auth()->user()->is_group) {
-            return response()->json("Unauthorized request", 401);
-        }
-
-        $item->update([
-            'comment' => $request->comment
-        ]);
-
-        return response()->json(new ItemResource($item), 200);
-    }
-
     public function getUuids()
     {
         $uuids = UniqueItem::all()->pluck('uuid')->toArray();
         return response()->json($uuids);
+    }
+
+    public function history(Item $item)
+    {
+        if (!auth()->user()->is_storekeeper) {
+            return response()->json("Unauthorized request", 401);
+        }
+
+        return ItemTakeOutResource::collection($item->takeOuts);
+    }
+
+    public function uniqueItemHistory(UniqueItem $uniqueItem)
+    {
+        if (!auth()->user()->is_storekeeper) {
+            return response()->json("Unauthorized request", 401);
+        }
+
+        error_log($uniqueItem->uuid);
+        return TakeOutResource::collection($uniqueItem->takeOuts);
     }
 }

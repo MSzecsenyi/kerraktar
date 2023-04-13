@@ -52,8 +52,8 @@ class TakeOutController extends Controller
         }
 
         foreach ($request->uniqueItems as $uniqueItem) {
-
-            $uItem = UniqueItem::find($uniqueItem);
+            error_log($uniqueItem);
+            $uItem = UniqueItem::where('uuid', $uniqueItem)->first();
             $item = $uItem->item;
             $newTakeout->items()->syncWithoutDetaching([
                 $item['id'] => ['amount' => -1]

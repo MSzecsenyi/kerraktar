@@ -4,17 +4,17 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ItemRequestResource extends JsonResource
+class RequestItemResource extends JsonResource
 {
     private static $startDate;
     private static $endDate;
 
     public static function customCollection($resource, $startDate, $endDate): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-        {
-            self::$startDate = $startDate;
-            self::$endDate = $endDate;
-            return parent::collection($resource);
-        }
+    {
+        self::$startDate = $startDate;
+        self::$endDate = $endDate;
+        return parent::collection($resource);
+    }
 
     /**
      * Transform the resource into an array.
