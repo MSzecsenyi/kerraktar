@@ -100,6 +100,7 @@ class TakeOutController extends Controller
         foreach ($takeOut->uniqueItems as $uniqueItem) {
             $uniqueItem->update(['taken_out_by' => null]);
             $uniqueItem->item->increment('in_store_amount', 1);
+            $uniqueItem->save();
         }
 
         return response()->json($takeOut, 200);
