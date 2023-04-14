@@ -36,6 +36,23 @@ class TakeOutController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
+        foreach ($request->items as $item) {
+            $inStoreAmount = Item::find($item['id'])->in_store_amount;
+
+            if ($inStoreAmount < $item['amount']) {
+                return response()->json("Insufficient in-store amount for item with id " . $item['id'], 400);
+            }
+        }
+
+        foreach ($request->uniqueItems as $uniqueItem) {
+            $uItem = UniqueItem::where('uuid', $uniqueItem)->first();
+
+            if (!$uItem || $uItem->taken_out_by !== null) {
+                return response()->json("Invalid unique item with uuid " . $uniqueItem, 400);
+            }
+        }
+
+
         $newTakeout = TakeOut::create([
             'start_date'        => now(),
             'end_date'          => null,
@@ -52,7 +69,6 @@ class TakeOutController extends Controller
         }
 
         foreach ($request->uniqueItems as $uniqueItem) {
-            error_log($uniqueItem);
             $uItem = UniqueItem::where('uuid', $uniqueItem)->first();
             $item = $uItem->item;
             $newTakeout->items()->syncWithoutDetaching([
