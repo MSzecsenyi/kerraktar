@@ -208,7 +208,6 @@ class ItemController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
-        error_log($uniqueItem->uuid);
         return TakeOutResource::collection($uniqueItem->takeOuts);
     }
 }

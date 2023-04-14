@@ -99,7 +99,7 @@ class TakeOutController extends Controller
         }
 
         foreach ($takeOut->uniqueItems as $uniqueItem) {
-            $uniqueItem->update(['is_in_store' => null]);
+            $uniqueItem->update(['taken_out_by' => null]);
         }
 
         return response()->json($takeOut, 200);
