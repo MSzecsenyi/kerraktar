@@ -3,7 +3,7 @@ composer install --no-interaction
 cp .env.example .env
 php artisan key:generate
 npm install
-npm run prod
+npm run build
 # A storage, cache irhato kell legyen a webszerver altal
 chmod -R 777 storage bootstrap/cache
 # Egy ures sqlite fajlnak leteznie kell, kulonben a migrate nem mukodik
