@@ -91,12 +91,17 @@ class TakeOutController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
+        if (!is_null($takeOut->end_date)) {
+            return response()->json("already returned item", 400);
+        }
+
         $takeOut->update(['end_date' => now()]);
 
         foreach ($takeOut->items as $item) {
             $item = Item::find($item->id);
+            $pivot = $takeOut->items()->where('item_id', $item->id)->first();
             if (!$item->is_unique) {
-                $item->increment('in_store_amount', $item->pivot->amount);
+                $item->increment('in_store_amount', $pivot->amount);
             }
         }
 
