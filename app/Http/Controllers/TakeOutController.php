@@ -94,7 +94,10 @@ class TakeOutController extends Controller
         $takeOut->update(['end_date' => now()]);
 
         foreach ($takeOut->items as $item) {
-            Item::find($item->id)->where('is_unique', false)->increment('in_store_amount', $item->pivot->amount);
+            $item = Item::find($item->id);
+            if (!$item->is_unique) {
+                $item->increment('in_store_amount', $item->pivot->amount);
+            }
         }
 
         foreach ($takeOut->uniqueItems as $uniqueItem) {
