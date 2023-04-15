@@ -3,7 +3,7 @@ call composer install --no-interaction
 copy .env.example .env
 call php artisan key:generate
 call npm install
-call npm run prod
+call npm run build
 :: Egy ures sqlite fajlnak leteznie kell, kulonben a migrate nem mukodik
 call php artisan migrate:fresh
 call php artisan db:seed
