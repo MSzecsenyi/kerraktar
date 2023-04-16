@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,10 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::redirect('/', 'login');
 
 Route::group(['middleware' => 'auth'], function () {
+
     Route::group(['middleware' => 'isAdmin'], function () {
-        Route::get('/dashboard', function () {
-            return view('dashboard');
-        })->name('dashboard');
+        Route::get('users',                                      [UserController::class, 'index'])->name('users');
+        Route::get('user_create',                                [UserController::class, 'create'])->name('user_create');
     });
 
     Route::get('/no_access', function () {
@@ -27,5 +28,6 @@ Route::group(['middleware' => 'auth'], function () {
     })->name('no_access');
 });
 
+Route::post('user_store',                                [UserController::class, 'store'])->name('user_store');
 
 require __DIR__ . '/auth.php';
