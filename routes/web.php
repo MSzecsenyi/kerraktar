@@ -15,8 +15,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', 'login');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+Route::group(['middleware' => 'auth'], function () {
+    Route::group(['middleware' => 'isAdmin'], function () {
+        Route::get('/dashboard', function () {
+            return view('dashboard');
+        })->name('dashboard');
+    });
+
+    Route::get('/no_access', function () {
+        return view('no_access');
+    })->name('no_access');
+});
+
 
 require __DIR__ . '/auth.php';

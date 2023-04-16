@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Notifications;
 
 class User extends Authenticatable
 {
@@ -58,5 +59,11 @@ class User extends Authenticatable
     public function takenOutUniqueItems()
     {
         return $this->hasMany(UniqueItem::class, 'taken_out_by');
+    }
+
+    //WEB
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\CustomResetPasswordNotification($token));
     }
 }

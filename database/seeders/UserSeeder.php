@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
     {
         User::factory()->create([
             'name' => "admin",
-            'email' => "szecsenyi.marton+admin@gmail.com",
+            'email' => "admin@nn.nn",
             'email_verified_at' => now(),
             'password' => Hash::make('password'), // password
             'remember_token' => Str::random(10),
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
 
         User::factory()->create([
             'name' => "raktaros",
-            'email' => "szecsenyi.marton+raktaros@gmail.com",
+            'email' => "raktaros@nn.nn",
             'email_verified_at' => now(),
             'password' => Hash::make('password'), // password
             'remember_token' => Str::random(10),
@@ -46,7 +46,7 @@ class UserSeeder extends Seeder
 
         User::factory()->create([
             'name' => "csapat",
-            'email' => "szecsenyi.marton+csapat@gmail.com",
+            'email' => "csapat@nn.nn",
             'email_verified_at' => now(),
             'password' => Hash::make('password'), // password
             'remember_token' => Str::random(10),
