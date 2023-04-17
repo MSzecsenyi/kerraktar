@@ -25,12 +25,21 @@ class StoreUserRequest extends FormRequest
     {
         return [
             'email' => 'required|email|unique:users,email',
-            'name' => 'required|unique:users,name',
-            'group_number' => 'required|unique:users,group_number',
-            'district' => 'required',
-            'group-checkbox-list' => 'required_without_all:storekeeper-checkbox-list,admin-checkbox-list|boolean',
-            'storekeeper-checkbox-list' => 'required_without_all:group-checkbox-list,admin-checkbox-list|boolean',
-            'admin-checkbox-list' => 'required_without_all:group-checkbox-list,storekeeper-checkbox-list|boolean',
+            'name' => 'required',
+            'group_number' => 'required',
+            'district' => 'required|numeric',
+            'is_group' => 'required_without_all:is_storekeeper,is_admin|boolean',
+            'is_storekeeper' => 'required_without_all:is_group,is_admin|boolean',
+            'is_admin' => 'required_without_all:is_group,is_storekeeper|boolean',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email.unique' => 'Ez az email már használatban van más felhasználónál',
+            // 'name.unique' => 'Ez a név már használatban van más felhasználónál',
+            // 'group_number.unique' => 'Csapatonként egy felhasználó hozható létre '
         ];
     }
 }

@@ -7,19 +7,22 @@ use App\Http\Resources\StoreResource;
 use App\Models\Category;
 use App\Models\User;
 use App\Models\Store;
+use App\Notifications\UserInviteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         $users = User::query()
             ->withCount(['takeOuts as has_requests' => function ($query) {
                 $query->whereNull('end_date');
             }])
             ->orderBy('district')
+            ->orderBy('group_number')
             ->orderBy('name')
             ->paginate(30);
 
@@ -42,11 +45,22 @@ class UserController extends Controller
 
     public function store(StoreUserRequest $request)
     {
-        error_log("kaki");
         if (!auth()->user()->is_admin) {
             return response()->json("Unauthorized request", 401);
         }
-        $user = User::create($request->validated());
+        $user = User::create([
+            'email' => $request->validated('email'),
+            'name' => $request->validated('name'),
+            'group_number' => $request->validated('group_number'),
+            'district' => $request->validated('district'),
+            'is_group' => array_key_exists('is_group', $request->validated()),
+            'is_storekeeper' => array_key_exists('is_storekeeper', $request->validated()),
+            'is_admin' => array_key_exists('is_admin', $request->validated()),
+            'password' => 'not_created'
+        ]);
+
+        $url = URL::signedRoute('invitation', $user);
+        $user->notify(new UserInviteNotification($url));
 
         return redirect()->route('users');
     }
@@ -59,7 +73,18 @@ class UserController extends Controller
 
         $user->delete();
 
-        return response()->json(null, 204);
+        return redirect()->route('users');
+    }
+
+    public function invitation(User $user)
+    {
+        if (!request()->hasValidSignature() || $user->password != 'not_created') {
+            abort(code: 401);
+        }
+
+        auth()->login($user);
+
+        return redirect()->route('users');
     }
 
     public function logout()

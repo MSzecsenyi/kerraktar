@@ -28,7 +28,7 @@
                     </svg>
                     <span class="sr-only">Close modal</span>
                 </button>
-                <x-auth-validation-errors class="mb-4" :errors="$errors" />
+                <x-auth-validation-errors class="pt-6 pl-10" :errors="$errors" />
                 <div class="px-6 py-6 lg:px-8">
                     <h3 class="mb-4 text-xl font-medium text-gray-900">Új felhasználó létrehozása</h3>
                     <form class="space-y-6" action="{{ route('user_store') }}" method="POST">
@@ -58,9 +58,10 @@
                                 <div>
                                     <label for="district"
                                         class="block mb-2 text-sm font-medium text-gray-900">Kerület</label>
-                                    <select id="district"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 ">
-                                        <option selected="">Válassz kerületet!</option>
+                                    <select id="district" name="district"
+                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 block w-full p-2.5 "
+                                        required>
+                                        <option disabled selected value>Válassz kerületet!</option>
                                         @for ($i = 1; $i <= 10; $i++)
                                             <option value={{ $i }}>{{ $i }}. kerület</option>
                                         @endfor
@@ -73,26 +74,27 @@
                             class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                             <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
                                 <div class="flex items-center pl-3">
-                                    <input id="group-checkbox-list" type="checkbox" value=""
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                    <label for="group-checkbox-list"
+                                    <input id="is_group" name="is_group" required type="checkbox" value="1"
+                                        class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <label for="is_group"
                                         class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Csapat
                                     </label>
                                 </div>
                             </li>
                             <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
                                 <div class="flex items-center pl-3">
-                                    <input id="storekeeper-checkbox-list" type="checkbox" value=""
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                    <label for="storekeeper-checkbox-list"
+                                    <input id="is_storekeeper" name="is_storekeeper" required type="checkbox"
+                                        value="1"
+                                        class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <label for="is_storekeeper"
                                         class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Raktáros</label>
                                 </div>
                             </li>
                             <li class="w-full dark:border-gray-600">
                                 <div class="flex items-center pl-3">
-                                    <input id="admin-checkbox-list" type="checkbox" value=""
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
-                                    <label for="admin-checkbox-list"
+                                    <input id="is_admin" name="is_admin" required type="checkbox" value="1"
+                                        class="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 dark:focus:ring-green-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                    <label for="is_admin"
                                         class="w-full py-3 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Admin</label>
                                 </div>
                             </li>
@@ -163,9 +165,14 @@
                                             @if ($user->has_requests)
                                                 Vannak visszahozatlan eszközei
                                             @else
-                                                <x-button>
-                                                    {{ __('Törlés') }}
-                                                </x-button>
+                                                <form action="{{ route('user_destroy', $user) }}" method="POST">
+                                                    @method('DELETE')
+                                                    @csrf
+                                                    <x-button
+                                                        onclick="return confirm('Biztosan ki akarod törölni a felhasználót?')">
+                                                        {{ __('Törlés') }}
+                                                    </x-button>
+                                                </form>
                                             @endif
 
                                         </td>
@@ -192,8 +199,8 @@
 </x-app-layout>
 
 <script>
+    //Modal on/off buttons
     const $modalElement = document.querySelector('#new-user-modal');
-    console.log($modalElement)
 
     const modalOptions = {
         placement: 'center-center',
@@ -208,12 +215,32 @@
 
     newUserModalOpenButton.addEventListener('click', () => {
         newUserModal.show();
-        console.log("click");
     })
     newUserModalCloseButton.addEventListener('click', () => {
         newUserModal.hide();
-        console.log("click");
     })
 
-    newUserModal.show()
+    //checkbox selection control
+    var requiredCheckboxes = document.querySelectorAll(':required[type="checkbox"]');
+    for (var i = 0; i < requiredCheckboxes.length; i++) {
+        requiredCheckboxes[i].addEventListener('change', function() {
+            var checkedCount = 0;
+            for (var j = 0; j < requiredCheckboxes.length; j++) {
+                if (requiredCheckboxes[j].checked) {
+                    checkedCount++;
+                }
+            }
+            if (checkedCount == 0) {
+                for (var j = 0; j < requiredCheckboxes.length; j++) {
+                    if (requiredCheckboxes[j] != this) {
+                        requiredCheckboxes[j].required = true;
+                    }
+                }
+            } else {
+                for (var j = 0; j < requiredCheckboxes.length; j++) {
+                    requiredCheckboxes[j].required = false;
+                }
+            }
+        });
+    }
 </script>

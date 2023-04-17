@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
             'name' => "admin",
             'email' => "admin@nn.nn",
             'email_verified_at' => now(),
-            'password' => Hash::make('password'), // password
+            'password' => bcrypt('password'), // password
             'remember_token' => Str::random(10),
             'district' => 5,
             'group_number' => 519,
@@ -34,7 +34,7 @@ class UserSeeder extends Seeder
             'name' => "raktaros",
             'email' => "raktaros@nn.nn",
             'email_verified_at' => now(),
-            'password' => Hash::make('password'), // password
+            'password' => bcrypt('password'), // password
             'remember_token' => Str::random(10),
             'district' => 5,
             'group_number' => 519,
@@ -48,7 +48,7 @@ class UserSeeder extends Seeder
             'name' => "csapat",
             'email' => "csapat@nn.nn",
             'email_verified_at' => now(),
-            'password' => Hash::make('password'), // password
+            'password' => bcrypt('password'), // password
             'remember_token' => Str::random(10),
             'district' => 5,
             'group_number' => 519,

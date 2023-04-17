@@ -1147,5 +1147,8 @@
     "passwords.sent": "Elküldtünk egy jelszó-visszállító linket",
     "passwords.throttled": "Kérlek várj újrapróbálkozás előtt",
     "passwords.token": "Lejárt jelszó-visszaállító token",
-    "passwords.user": "Ezzel az emaillel nem létezik felhasználó."
+    "passwords.user": "Ezzel az emaillel nem létezik felhasználó.",
+    "validation.min.string": "A jelszó legalább :min karakter hosszú legyen",
+    "validation.confirmed": "Nem azonos a két jelszó"
+
 }
