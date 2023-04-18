@@ -60,6 +60,7 @@ class UserController extends Controller
         ]);
 
         $url = URL::signedRoute('invitation', $user);
+        error_log($url);
         $user->notify(new UserInviteNotification($url));
 
         return redirect()->route('users');
