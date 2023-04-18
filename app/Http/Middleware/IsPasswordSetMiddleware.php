@@ -16,7 +16,7 @@ class IsPasswordSetMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->check() && auth()->user()->password == 'not_created' && !$request->password && !$request->is('setpassword')) {
+        if (auth()->check() && auth()->user()->password == 'not_created' && !$request->password && !$request->is('setpassword') && !$request->is('logout')) {
             return redirect()->route('setpassword');
         }
         return $next($request);
