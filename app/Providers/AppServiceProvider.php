@@ -27,10 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Paginator::defaultView('vendor/pagination/paginator');
-        if ($this->app->environment('production')) {
-            URL::forceScheme('https');
-        }
+        // Paginator::defaultView('vendor/pagination/paginator');
+        // if ($this->app->environment('production')) {
+        //     URL::forceScheme('https');
+        // }
         // INFO: kiírja db comm közben, hogy éppen milyen queryket használ
         // DB::listen(function ($query) {
         //     dump([$query->sql, $query->bindings]);
