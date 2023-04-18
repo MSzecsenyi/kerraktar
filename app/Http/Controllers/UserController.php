@@ -59,7 +59,7 @@ class UserController extends Controller
             'password' => 'not_created'
         ]);
 
-        $url = URL::signedRoute('invitation', $user);
+        $url = URL::signedRoute('invitation', $user, [], true);
         error_log($url);
         $user->notify(new UserInviteNotification($url));
 
