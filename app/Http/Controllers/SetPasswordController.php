@@ -13,7 +13,7 @@ class SetPasswordController extends Controller
 
     public function store(StorePasswordRequest $request)
     {
-        auth()->user()->update([
+        auth()->user->update([
             'password' => bcrypt($request->password)
         ]);
 

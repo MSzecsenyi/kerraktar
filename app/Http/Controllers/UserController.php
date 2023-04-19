@@ -29,11 +29,6 @@ class UserController extends Controller
         return view('users', compact('users'));
     }
 
-    public function create()
-    {
-        return view('user_create');
-    }
-
     public function show(User $user)
     {
         if (!auth()->user()->is_admin && !auth()->user()->id == $user->id) {
@@ -68,10 +63,6 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
-        if (!auth()->user()->is_admin) {
-            return response()->json("Unauthorized request", 401);
-        }
-
         $user->delete();
 
         return redirect()->route('users');

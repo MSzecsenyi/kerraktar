@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreStoreRequest;
 use App\Http\Resources\StoreResource;
 use App\Models\Category;
 use App\Models\Item;
@@ -16,21 +17,20 @@ class StoreController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        if(!auth()->user()->is_admin){
-            return response()->json("Unauthorized request", 401);
-        }
+        $stores = Store::query()
+            ->withCount(['items as items'])
+            ->with(['users' => function ($query) {
+                $query->pluck('name');
+            }])
+            ->orderBy('district')
+            ->orderBy('address')
+            ->paginate(30);
 
-        $stores = Store::all();
+        $storekeepers = User::where('is_storekeeper', true)->select('name', 'district')->get();
 
-        if($request->has('district')){
-            $stores = $stores->filter(function ($store) use ($request){
-                return $store->district == $request->district;
-            });
-        }
-
-        return StoreResource::collection($stores);
+        return view('stores', compact('stores', 'storekeepers'));
     }
 
     /**
@@ -41,7 +41,7 @@ class StoreController extends Controller
      */
     public function show(Store $store)
     {
-        if(!auth()->user()->is_admin){
+        if (!auth()->user()->is_admin) {
             return response()->json("Unauthorized request", 401);
         }
 
@@ -54,20 +54,17 @@ class StoreController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreStoreRequest $request)
     {
-        if(!auth()->user()->is_admin){
+        if (!auth()->user()->is_admin) {
             return response()->json("Unauthorized request", 401);
         }
-
-        $request->validate([
-            'district' => 'required|between:1,10||integer',
-            'address' => 'required|min:10|max:256'
+        $store = Store::create([
+            'district' => $request->validated('district'),
+            'address' => $request->validated('address'),
         ]);
 
-        $store = Store::create($request->all());
-
-        return response()->json($store, 201);
+        return redirect()->route('stores');
     }
 
     /**
@@ -78,13 +75,10 @@ class StoreController extends Controller
      */
     public function destroy(Store $store)
     {
-        if(!auth()->user()->is_admin){
-            return response()->json("Unauthorized request", 401);
-        }
-
+        $store->items()->delete();
         $store->delete();
 
-        return response()->json(null, 204);
+        return redirect()->route('stores');
     }
 
     /**
@@ -94,15 +88,15 @@ class StoreController extends Controller
      */
     public function addStorekeeper(Request $request)
     {
-        if(!auth()->user()->is_admin){
+        if (!auth()->user()->is_admin) {
             return response()->json("Unauthorized request", 401);
         }
 
         $user = User::findOrFail($request->userId);
         $store = Store::findOrFail($request->storeId);
 
-        if(!$user->isStorekeeper()){
-        return response()->json(['message' => 'Bad request - requested user is not a storekeeper'], 400);
+        if (!$user->isStorekeeper()) {
+            return response()->json(['message' => 'Bad request - requested user is not a storekeeper'], 400);
         }
 
         $store->users()->attach($user);
@@ -117,15 +111,15 @@ class StoreController extends Controller
      */
     public function deleteStorekeeper(Request $request)
     {
-        if(!auth()->user()->is_admin){
+        if (!auth()->user()->is_admin) {
             return response()->json("Unauthorized request", 401);
         }
 
         $user = User::findOrFail($request->userId);
         $store = Store::findOrFail($request->storeId);
 
-        if(!in_array($user->id,$store->users()->pluck('users.id')->toArray())){
-        return response()->json(['message' => 'Bad request - requested user is not a storekeeper of the specified store'], 400);
+        if (!in_array($user->id, $store->users()->pluck('users.id')->toArray())) {
+            return response()->json(['message' => 'Bad request - requested user is not a storekeeper of the specified store'], 400);
         }
 
         $store->users()->detach($user);
@@ -140,16 +134,16 @@ class StoreController extends Controller
      */
     public function migrateItems(Request $request)
     {
-        if(!auth()->user()->is_admin){
+        if (!auth()->user()->is_admin) {
             return response()->json("Unauthorized request", 401);
         }
-        
+
 
         $originalStore = Store::findOrFail($request->originalStoreId);
         // error_log($originalStore->items()->pluck('id')->toArray()[1]);
         // $destinationStore = Store::find($request->destinationStoreId);
 
-        foreach ($originalStore->items()->pluck('id')->toArray() as $itemId){
+        foreach ($originalStore->items()->pluck('id')->toArray() as $itemId) {
             $item = Item::find($itemId);
             $item->store_id = $request->destinationStoreId;
             $item->save();
@@ -158,5 +152,3 @@ class StoreController extends Controller
         return response()->json($originalStore, 200);
     }
 }
-
-
