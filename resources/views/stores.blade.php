@@ -52,13 +52,16 @@
                         </div>
                         <div>
                             <label for="storekeeper"
-                                class="block mb-2 text-sm font-medium text-gray-900">Raktáros</label>
-                            <select id="storekeeper" name="storekeeper"
-                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50"
-                                required multiple>
+                                class="block mb-2 text-sm font-medium text-gray-900 select2">Raktáros</label>
+                            <select id="storekeeper" name="storekeeper" required multiple
+                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 ">
                             </select>
                         </div>
-
+                        <div>
+                            <label for="items" class="block mb-2 text-sm font-medium text-gray-900 select2">Eszközök
+                                feltöltése (opcionális)</label>
+                            <input type="file" name="items" id="items" />
+                        </div>
                         <button type="submit"
                             class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Létrehozás</button>
                     </form>
@@ -188,8 +191,6 @@
         </div>
     </div>
 </x-app-layout>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     //Add store modal on/off buttons
     const $modalElement = document.querySelector('#new-store-modal');
@@ -279,7 +280,7 @@
         var storekeeperDropdown = $('#storekeeper');
         storekeeperDropdown.empty();
         if (storekeepers.length > 0) {
-            storekeeperDropdown.append('<option disabled selected value>Válassz raktárost!</option>');
+            // storekeeperDropdown.append('<option disabled selected value>Válassz raktárost!</option>');
             $.each(storekeepers, function(index, storekeeper) {
                 storekeeperDropdown.append('<option value="' + storekeeper.id + '">' + storekeeper.name +
                     '</option>');
@@ -296,6 +297,26 @@
         var filteredStorekeepers = filterStorekeepers(selectedDistrict);
         updateStorekeeperOptions(filteredStorekeepers);
     });
+
+    // Select2 multiselect dropdown
+    $(document).ready(function() {
+        $('#storekeeper').select2({
+            contrainerCssClass: "all",
+            placeholder: "Válassz raktárost",
+            language: {
+                noResults: function() {
+                    return "Ebben a kerületben még nincs raktáros";
+                }
+            }
+        });
+    });
+
+    // FilePond
+    const inputElement = document.querySelector('input[id="items"]');
+    const pond = FilePond.create(inputElement);
+    FilePond.setOPtions({
+        server: '/upload'
+    })
 
     newStoreModal.show();
 
