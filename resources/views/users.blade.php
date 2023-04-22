@@ -59,7 +59,7 @@
                                     <label for="district"
                                         class="block mb-2 text-sm font-medium text-gray-900">Kerület</label>
                                     <select id="district" name="district"
-                                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 block w-full p-2.5 "
+                                        class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 block w-full p-2.5 "
                                         required>
                                         <option disabled selected value>Válassz kerületet!</option>
                                         @for ($i = 1; $i <= 10; $i++)

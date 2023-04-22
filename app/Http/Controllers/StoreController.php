@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStoreRequest;
 use App\Http\Resources\StoreResource;
-use App\Models\Category;
 use App\Models\Item;
 use App\Models\Store;
 use App\Models\User;
@@ -28,7 +27,7 @@ class StoreController extends Controller
             ->orderBy('address')
             ->paginate(30);
 
-        $storekeepers = User::where('is_storekeeper', true)->select('name', 'district')->get();
+        $storekeepers = User::where('is_storekeeper', true)->select('id', 'name', 'district')->get();
 
         return view('stores', compact('stores', 'storekeepers'));
     }
@@ -56,13 +55,22 @@ class StoreController extends Controller
      */
     public function store(StoreStoreRequest $request)
     {
-        if (!auth()->user()->is_admin) {
-            return response()->json("Unauthorized request", 401);
-        }
+        error_log($request->storekeepers[0]);
+        dd($request->all());
+        $request->validate(['storekeepers']);
         $store = Store::create([
             'district' => $request->validated('district'),
             'address' => $request->validated('address'),
         ]);
+
+        foreach ($request->storekeepers as $storekeeperId) {
+            error_log($storekeeperId);
+            try {
+                $store->users()->attach($storekeeperId);
+            } catch (\Exception $e) {
+                error_log($e);
+            }
+        }
 
         return redirect()->route('stores');
     }

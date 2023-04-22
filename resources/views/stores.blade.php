@@ -14,7 +14,7 @@
     <!-- Add store modal -->
     <div id="new-store-modal" tabindex="-1" aria-hidden="true"
         class="fixed top-0 left-0 z-50 hidden w-full h-screen max-h-full p-4 overflow-x-hidden overflow-y-auto md:inset-0">
-        <div class="relative w-1/3 max-h-full ">
+        <div class="relative w-[500px] ">
             <!-- Modal content -->
             <div class="relative self-center mt-40 bg-white rounded-lg shadow w-ű">
                 <button type="button"
@@ -36,31 +36,32 @@
                         <div>
                             <label for="district" class="block mb-2 text-sm font-medium text-gray-900">Kerület</label>
                             <select id="district" name="district"
-                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 "
+                                class="block w-full border border-gray-300 text-gray-900 text-sm rounded-lg focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 p-2.5"
                                 required>
-                                <option disabled selected value>Válassz kerületet!</option>
+                                <option value selected disabled>Válassz kerületet</option>
                                 @for ($i = 1; $i <= 10; $i++)
                                     <option value={{ $i }}>{{ $i }}. kerület</option>
                                 @endfor
                             </select>
                         </div>
                         <div>
-                            <label for="name"
+                            <label for="address"
                                 class="block w-full mb-2 text-sm font-medium text-gray-900">Cím</label>
-                            <x-input type="text" name="name" class="w-full" id="name"
+                            <x-input type="text" name="address" class="w-full" id="address"
                                 placeholder="Széchenyi tér 1." required />
                         </div>
                         <div>
-                            <label for="storekeeper"
-                                class="block mb-2 text-sm font-medium text-gray-900 select2">Raktáros</label>
-                            <select id="storekeeper" name="storekeeper" required multiple
-                                class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:border-green-300 focus:ring focus:ring-green-200 focus:ring-opacity-50 ">
+                            <label for="storekeepers"
+                                class="block w-full mb-2 text-sm font-medium text-gray-900">Raktáros</label>
+                            <select id="storekeepers" name="storekeepers[]" required multiple
+                                class="block w-full rounded-lg">
                             </select>
                         </div>
                         <div>
-                            <label for="items" class="block mb-2 text-sm font-medium text-gray-900 select2">Eszközök
+                            <label for="excelItems"
+                                class="block mb-2 text-sm font-medium text-gray-900 select2">Eszközök
                                 feltöltése (opcionális)</label>
-                            <input type="file" name="items" id="items" />
+                            <input type="file" name="excelItems" id="excelItems" />
                         </div>
                         <button type="submit"
                             class="w-full text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">Létrehozás</button>
@@ -235,34 +236,9 @@
     });
     deleteStoreCloseButtons.forEach(button => {
         button.addEventListener('click', () => {
-            console.log('clack');
             deleteStoreModal.hide();
         });
     });
-
-    //checkbox selection control
-    var requiredCheckboxes = document.querySelectorAll(':required[type="checkbox"]');
-    for (var i = 0; i < requiredCheckboxes.length; i++) {
-        requiredCheckboxes[i].addEventListener('change', function() {
-            var checkedCount = 0;
-            for (var j = 0; j < requiredCheckboxes.length; j++) {
-                if (requiredCheckboxes[j].checked) {
-                    checkedCount++;
-                }
-            }
-            if (checkedCount == 0) {
-                for (var j = 0; j < requiredCheckboxes.length; j++) {
-                    if (requiredCheckboxes[j] != this) {
-                        requiredCheckboxes[j].required = true;
-                    }
-                }
-            } else {
-                for (var j = 0; j < requiredCheckboxes.length; j++) {
-                    requiredCheckboxes[j].required = false;
-                }
-            }
-        });
-    }
 
     // Function to filter storekeepers based on selected district
     var storekeepers = {!! json_encode($storekeepers) !!};
@@ -270,52 +246,74 @@
     function filterStorekeepers(district) {
         var filteredStorekeepers = storekeepers.filter(function(storekeeper) {
             return storekeeper.district == district;
+        }).map(function(storekeeper) {
+            return {
+                id: storekeeper.id,
+                text: storekeeper.name
+            }
         });
-        console.log(filteredStorekeepers)
         return filteredStorekeepers;
     }
 
-    // Function to update storekeeper dropdown options
-    function updateStorekeeperOptions(storekeepers) {
-        var storekeeperDropdown = $('#storekeeper');
-        storekeeperDropdown.empty();
-        if (storekeepers.length > 0) {
-            // storekeeperDropdown.append('<option disabled selected value>Válassz raktárost!</option>');
-            $.each(storekeepers, function(index, storekeeper) {
-                storekeeperDropdown.append('<option value="' + storekeeper.id + '">' + storekeeper.name +
-                    '</option>');
-            });
-        } else {
-            storekeeperDropdown.append(
-                '<option disabled selected value>Még nem lett raktáros létrehozva ebben a kerületben</option>');
-        }
-    }
-
     // Event listener for district dropdown change
+    var filteredStorekeepers
     $('#district').on('change', function() {
         var selectedDistrict = $(this).val();
-        var filteredStorekeepers = filterStorekeepers(selectedDistrict);
-        updateStorekeeperOptions(filteredStorekeepers);
+        filteredStorekeepers = filterStorekeepers(selectedDistrict);
+        updateSelect2Data(filteredStorekeepers);
     });
 
-    // Select2 multiselect dropdown
+    //Select2 dropdowns
+
     $(document).ready(function() {
-        $('#storekeeper').select2({
-            contrainerCssClass: "all",
+        $('#storekeepers').select2({
+            selectionCssClass: ":all:",
             placeholder: "Válassz raktárost",
             language: {
                 noResults: function() {
                     return "Ebben a kerületben még nincs raktáros";
                 }
-            }
+            },
+            closeOnSelect: false,
+            data: filteredStorekeepers
         });
     });
 
+    function updateSelect2Data(newData) {
+        $('#storekeepers').empty().select2({
+            selectionCssClass: ":all:",
+            placeholder: "Válassz raktárost",
+            language: {
+                noResults: function() {
+                    return "Ebben a kerületben még nincs raktáros";
+                }
+            },
+            closeOnSelect: false,
+            data: newData
+        });
+    }
+
     // FilePond
-    const inputElement = document.querySelector('input[id="items"]');
+    FilePond.registerPlugin(FilePondPluginFileValidateType);
+    FilePond.registerPlugin(FilePondPluginFileValidateSize);
+    const inputElement = document.querySelector('input[id="excelItems"]');
     const pond = FilePond.create(inputElement);
-    FilePond.setOPtions({
-        server: '/upload'
+    FilePond.setOptions({
+        server: {
+            url: '/upload',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        },
+        acceptedFileTypes: [
+            'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ],
+        labelFileTypeNotAllowed: "Nem megengedett fájltípus",
+        fileValidateTypeLabelExpectedTypes: "Kérlek .xls vagy .xlsx fájlt tölts fel, a megadott formátumban",
+        labelIdle: '<span class="filepond--label-action"> Válaszd ki</span> vagy húzd ide a feltölteni kívánt eszközlistát',
+        maxFileSize: '3MB',
+        labelMaxFileSizeExceeded: 'Túl nagy méretű fájl',
+        labelMaxFileSize: 'Maximum 3 MB',
     })
 
     newStoreModal.show();

@@ -13,7 +13,7 @@ class StoreStoreRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,8 +24,20 @@ class StoreStoreRequest extends FormRequest
     public function rules()
     {
         return [
-            'district' => 'required|between:1,10||integer',
-            'address' => 'required|min:10|max:256'
+            'district' => 'required|numeric',
+            'address' => 'required|max:256',
+            'storekeepers.*' => 'exists:users,id',
+            'excelItems' => 'nullable|mimetypes:application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'district.required' => 'Kerület kötelező',
+            'address.required' => 'Cím kötelező',
+            'storekeepers.exists' => 'Felhasználó nem létezik',
+            'excelItems.mimetypes' => 'Rossz fájltípus. Elfogadott kiterjesztések: xls, xlsx'
         ];
     }
 }
