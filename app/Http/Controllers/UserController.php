@@ -4,14 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Resources\StoreResource;
-use App\Models\Category;
 use App\Models\User;
 use App\Models\Store;
 use App\Notifications\UserInviteNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Validation\Rules\Password;
 
 class UserController extends Controller
 {

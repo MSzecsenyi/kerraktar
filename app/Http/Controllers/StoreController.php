@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreStoreRequest;
 use App\Http\Resources\StoreResource;
+use App\Imports\ItemImport;
 use App\Models\Item;
 use App\Models\Store;
+use App\Models\TemporaryFile;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class StoreController extends Controller
 {
@@ -56,8 +60,8 @@ class StoreController extends Controller
     public function store(StoreStoreRequest $request)
     {
         error_log($request->storekeepers[0]);
-        dd($request->all());
-        $request->validate(['storekeepers']);
+        DB::beginTransaction();
+        // dd($request->all());
         $store = Store::create([
             'district' => $request->validated('district'),
             'address' => $request->validated('address'),
@@ -72,7 +76,27 @@ class StoreController extends Controller
             }
         }
 
+        $tempFile = TemporaryFile::where('folder', $request->excelItems)->first();
+        if ($tempFile) {
+            Excel::import(new ItemImport(), storage_path('app/tmp/' . $request->excelItems . '/' . $tempFile->filename));
+        }
+        DB::commit();
+
         return redirect()->route('stores');
+    }
+
+    public function update(Request $request, Store $store)
+    {
+        $this->validate($request, [
+            'selectedStorekeepers' => 'array',
+            'selectedStorekeepers.*' => 'exists:users,id',
+        ]);
+
+        $selectedStorekeepers = $request->input('selectedStorekeepers', []);
+
+        $store->users()->sync($selectedStorekeepers);
+
+        return redirect()->back()->with('success', 'Users have been updated.');
     }
 
     /**
@@ -89,51 +113,7 @@ class StoreController extends Controller
         return redirect()->route('stores');
     }
 
-    /**
-     * Add a storekeeper to a specific store
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function addStorekeeper(Request $request)
-    {
-        if (!auth()->user()->is_admin) {
-            return response()->json("Unauthorized request", 401);
-        }
 
-        $user = User::findOrFail($request->userId);
-        $store = Store::findOrFail($request->storeId);
-
-        if (!$user->isStorekeeper()) {
-            return response()->json(['message' => 'Bad request - requested user is not a storekeeper'], 400);
-        }
-
-        $store->users()->attach($user);
-
-        return response()->json($store, 204);
-    }
-
-    /**
-     * Delete a storekeeper from a specific store
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function deleteStorekeeper(Request $request)
-    {
-        if (!auth()->user()->is_admin) {
-            return response()->json("Unauthorized request", 401);
-        }
-
-        $user = User::findOrFail($request->userId);
-        $store = Store::findOrFail($request->storeId);
-
-        if (!in_array($user->id, $store->users()->pluck('users.id')->toArray())) {
-            return response()->json(['message' => 'Bad request - requested user is not a storekeeper of the specified store'], 400);
-        }
-
-        $store->users()->detach($user);
-
-        return response()->json(null, 204);
-    }
 
     /**
      * Migrate all items from a store

@@ -50,13 +50,12 @@
                             <x-input type="text" name="address" class="w-full" id="address"
                                 placeholder="Széchenyi tér 1." required />
                         </div>
-                        <div>
-                            <label for="storekeepers"
-                                class="block w-full mb-2 text-sm font-medium text-gray-900">Raktáros</label>
-                            <select id="storekeepers" name="storekeepers[]" required multiple
-                                class="block w-full rounded-lg">
-                            </select>
-                        </div>
+                        <label for="storekeepers"
+                            class="block w-full mb-2 text-sm font-medium text-gray-900">Raktáros</label>
+                        <select id="storekeepers" name="storekeepers[]" required multiple
+                            class="block w-full rounded-lg">
+                            <option disabled> Válassz egy kerületet </option>
+                        </select>
                         <div>
                             <label for="excelItems"
                                 class="block mb-2 text-sm font-medium text-gray-900 select2">Eszközök
@@ -137,10 +136,12 @@
                                     <th scope="col" class="px-6 py-3 text-center">
                                         Eszközök
                                     </th>
-                                    <th scope="col" class="px-6 py-3 text-center">
+                                    <th scope="col" class="px-6 py-3 text-center w-[230px]">
                                         Raktáros
                                     </th>
-                                    <th scope="col" class="w-48 px-6 py-3">
+                                    <th scope="col" class="w-12 px-3 py-3">
+                                    </th>
+                                    <th scope="col" class="w-24 py-3">
                                     </th>
                                 </tr>
                             </thead>
@@ -156,22 +157,46 @@
                                         </th>
                                         <th scope="row"
                                             class="px-6 py-4 font-medium text-center whitespace-nowrap">
-                                            {{ $store->district }}
+                                            {{ $store->items }}
+                                        </th>
+                                        <th scope="row" class="py-4 font-medium text-center whitespace-nowrap">
+                                            <div class="flex w-[250px] justify-center">
+                                                <div id="storekeeper-list-{{ $store->id }}">
+                                                    @foreach ($store->users as $user)
+                                                        {{ $user->name }} <br>
+                                                    @endforeach
+                                                </div>
+                                                <form id="storekeeper-form-{{ $store->id }}"
+                                                    action="{{ route('store_update', $store->id) }}" method="POST"
+                                                    class="flex hidden">
+                                                    @method('PUT')
+                                                    @csrf
+                                                    <div class="flex-wrap h-auto">
+                                                        <select id="selectedStorekeepers-{{ $store->id }}"
+                                                            name="selectedStorekeepers[]" required multiple
+                                                            class="flex-wrap rounded-lg">
+                                                        </select>
+                                                    </div>
+                                                    <button type="submit"
+                                                        class="px-3 py-2 my-auto ml-3 font-bold text-white bg-green-700 rounded-full hover:bg-black">
+                                                        <i class="fas fa-check-square"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </th>
                                         <th scope="row"
-                                            class="px-6 py-4 font-medium text-center whitespace-nowrap">
-                                            @foreach ($store->users as $user)
-                                                {{ $user->name }} <br>
-                                            @endforeach
-
+                                            class="px-3 py-4 font-medium text-center whitespace-nowrap">
+                                            <button id="storekeeper-edit-toggle-{{ $store->id }}"
+                                                class="px-4 py-2 font-bold text-white bg-green-700 rounded-full hover:bg-black">
+                                                <i class="far fa-edit"></i>
+                                            </button>
                                         </th>
-                                        <td class="px-6 py-4 text-center">
+                                        <td class="py-4 text-center">
                                             <x-button class="mx-8" data-modal-target="delete-store-modal"
                                                 delete-modal-target="delete-store-modal"
                                                 data-store-id="{{ $store->id }}">
                                                 {{ __('Törlés') }}
                                             </x-button>
-
                                         </td>
                                     </tr>
                                 @empty
@@ -181,10 +206,11 @@
                                         </td>
                                     </tr>
                                 @endforelse
+
                             </tbody>
                         </table>
                         <div class="mt-2">
-                            {{ $stores->onEachSide(2)->links() }}
+                            {{ $stores->links() }}
                         </div>
                     </div>
                 </div>
@@ -275,7 +301,7 @@
                 }
             },
             closeOnSelect: false,
-            data: filteredStorekeepers
+            data: filteredStorekeepers,
         });
     });
 
@@ -289,7 +315,7 @@
                 }
             },
             closeOnSelect: false,
-            data: newData
+            data: newData,
         });
     }
 
@@ -309,14 +335,58 @@
             'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         ],
         labelFileTypeNotAllowed: "Nem megengedett fájltípus",
-        fileValidateTypeLabelExpectedTypes: "Kérlek .xls vagy .xlsx fájlt tölts fel, a megadott formátumban",
+        fileValidateTypeLabelExpectedTypes: "Kérlek .xls vagy .xlsx fájlt tölts fel",
         labelIdle: '<span class="filepond--label-action"> Válaszd ki</span> vagy húzd ide a feltölteni kívánt eszközlistát',
         maxFileSize: '3MB',
         labelMaxFileSizeExceeded: 'Túl nagy méretű fájl',
         labelMaxFileSize: 'Maximum 3 MB',
     })
 
-    newStoreModal.show();
+    // editStorekeepers toggle, setting the select data
+    @foreach ($stores as $store)
+        const storekeepersInStore{{ $store->id }} = {!! json_encode($store->users) !!}
+        const storekeeperList{{ $store->id }} = document.getElementById('storekeeper-list-{{ $store->id }}');
+        const storekeeperForm{{ $store->id }} = document.getElementById('storekeeper-form-{{ $store->id }}');
+        const toggleButton{{ $store->id }} = document.getElementById(
+            'storekeeper-edit-toggle-{{ $store->id }}');
+
+        toggleButton{{ $store->id }}.addEventListener('click', () => {
+            storekeeperList{{ $store->id }}.classList.toggle('hidden');
+            storekeeperForm{{ $store->id }}.classList.toggle('hidden');
+        });
+
+        const filteredStorekeepers{{ $store->id }} = filterStorekeepers({{ $store->district }}).map(function(
+            storekeeper) {
+            const alreadySelected = storekeepersInStore{{ $store->id }}.some(selectedStorekeeper =>
+                storekeeper.id === selectedStorekeeper.id);
+            console.log(alreadySelected)
+            return {
+                id: storekeeper.id,
+                text: storekeeper.text,
+                selected: alreadySelected,
+            };
+        });
+
+        $(document).ready(function() {
+            $('#selectedStorekeepers-{{ $store->id }}').select2({
+                selectionCssClass: ":all:",
+                dropdownCssClass: ":all:",
+                placeholder: "Válassz raktárost",
+                language: {
+                    noResults: function() {
+                        return "Ebben a kerületben még nincs raktáros";
+                    }
+                },
+                closeOnSelect: false,
+                data: filteredStorekeepers{{ $store->id }},
+            });
+        });
+    @endforeach
+
+    $(document).ready(function() {
+        $('.select2-search__field').prop('hidden', true);
+    })
+
 
     @if ($errors->any())
         newStoreModal.show();

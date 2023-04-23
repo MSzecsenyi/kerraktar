@@ -167,6 +167,9 @@
                                         Név
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-center">
+                                        Email
+                                    </th>
+                                    <th scope="col" class="px-6 py-3 text-center">
                                         Csapatszám
                                     </th>
                                     <th scope="col" class="px-6 py-3 text-center">
@@ -184,6 +187,9 @@
                                     <tr class="bg-white border-b ">
                                         <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap ">
                                             {{ $user->name }}
+                                        </th>
+                                        <th scope="row" class="px-6 py-4 font-medium text-center">
+                                            {{ $user->email }}
                                         </th>
                                         <th scope="row" class="px-6 py-4 font-medium text-center">
                                             {{ $user->group_number }}

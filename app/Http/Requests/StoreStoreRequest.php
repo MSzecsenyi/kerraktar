@@ -27,7 +27,7 @@ class StoreStoreRequest extends FormRequest
             'district' => 'required|numeric',
             'address' => 'required|max:256',
             'storekeepers.*' => 'exists:users,id',
-            'excelItems' => 'nullable|mimetypes:application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            // 'excelItems' => 'nullable|mimetypes:application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         ];
     }
 

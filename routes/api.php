@@ -42,13 +42,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('checkuser',                                  [UserController::class, 'check']);
 
     //STORE management endpoints
-    Route::get('stores',                                     [StoreController::class, 'index']);
-    Route::get('stores/{store}',                             [StoreController::class, 'show']);
-    Route::post('stores',                                    [StoreController::class, 'store']);
-    Route::post('add-storekeeper',                           [StoreController::class, 'addStorekeeper']);
-    Route::put('delete-storekeeper',                         [StoreController::class, 'deleteStorekeeper']);
-    Route::put('migrate-items',                              [StoreController::class, 'migrateItems']);
-    Route::delete('stores/{store}',                          [StoreController::class, 'destroy']);
+    // Route::put('migrate-items',                           [StoreController::class, 'migrateItems']);
 
     //REQUEST management endpoints
     Route::get('requests',                                   [RequestController::class, 'index']);

@@ -1149,6 +1149,9 @@
     "passwords.token": "Lejárt jelszó-visszaállító token",
     "passwords.user": "Ezzel az emaillel nem létezik felhasználó.",
     "validation.min.string": "A jelszó legalább :min karakter hosszú legyen",
-    "validation.confirmed": "Nem azonos a két jelszó"
+    "validation.confirmed": "Nem azonos a két jelszó",
+    "There was an error on row :row. :message": "Hibása :row. sor: :message",
+    "pagination.next": "Következő",
+    "pagination.previous": "Előző"
 
 }

@@ -30,7 +30,8 @@ Route::group(['middleware' => 'auth'], function () {
         //Store endpoints
         Route::get('stores',                                [StoreController::class, 'index'])->name('stores');
         Route::delete('store_destroy/{store}',              [StoreController::class, 'destroy'])->name('store_destroy');
-        Route::post('store_store',                         [StoreController::class, 'store'])->name('store_store');
+        Route::post('store_store',                          [StoreController::class, 'store'])->name('store_store');
+        Route::put('store_update/{store}',                  [StoreController::class, 'update'])->name('store_update');
 
         Route::post('upload',                               [UploadController::class, 'store']);
     });
