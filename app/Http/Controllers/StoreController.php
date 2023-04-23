@@ -59,7 +59,6 @@ class StoreController extends Controller
      */
     public function store(StoreStoreRequest $request)
     {
-        error_log($request->storekeepers[0]);
         DB::beginTransaction();
         // dd($request->all());
         $store = Store::create([
@@ -68,7 +67,6 @@ class StoreController extends Controller
         ]);
 
         foreach ($request->storekeepers as $storekeeperId) {
-            error_log($storekeeperId);
             try {
                 $store->users()->attach($storekeeperId);
             } catch (\Exception $e) {

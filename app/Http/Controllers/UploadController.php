@@ -10,7 +10,6 @@ class UploadController extends Controller
     public function store(Request $request)
     {
         if ($request->hasFile('excelItems')) {
-            error_log("hehe");
             $file = $request->file('excelItems');
             $filename = $file->getClientOriginalName();
             $folder = uniqid() . '-' . now()->timestamp;

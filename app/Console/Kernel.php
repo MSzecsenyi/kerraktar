@@ -15,7 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('delete:temp-files')->dailyAt('03:11');
+        $schedule->command('delete:temp-files')->hourly();
     }
 
     /**

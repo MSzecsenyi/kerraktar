@@ -16,7 +16,6 @@ class ItemImport implements ToModel, WithHeadingRow, WithValidation
      */
     public function model(array $row)
     {
-        // error_log($row[0]);
         return new Item([
             'store_id' => 1,
             'item_name' => $row['nev'],

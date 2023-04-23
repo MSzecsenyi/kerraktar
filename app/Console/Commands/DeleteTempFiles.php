@@ -28,7 +28,7 @@ class DeleteTempFiles extends Command
      */
     public function handle()
     {
-        $files = DB::table('temporary_files')->get();
+        $files = DB::table('temporary_files')->where('created_at', '<', now()->subHour())->get();
 
         foreach ($files as $file) {
             $path = storage_path('app/tmp/' . $file->folder);

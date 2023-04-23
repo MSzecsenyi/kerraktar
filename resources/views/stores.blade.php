@@ -359,7 +359,6 @@
             storekeeper) {
             const alreadySelected = storekeepersInStore{{ $store->id }}.some(selectedStorekeeper =>
                 storekeeper.id === selectedStorekeeper.id);
-            console.log(alreadySelected)
             return {
                 id: storekeeper.id,
                 text: storekeeper.text,

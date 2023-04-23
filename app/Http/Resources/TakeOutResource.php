@@ -14,8 +14,6 @@ class TakeOutResource extends JsonResource
      */
     public function toArray($request)
     {
-        error_log($request);
-
         return [
             'id' => $this->id,
             'start_date' => $this->start_date,
