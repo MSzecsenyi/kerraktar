@@ -36,6 +36,24 @@ class UserController extends Controller
         return $user;
     }
 
+    public function check(Request $request)
+    {
+        $user = auth()->user();
+        $stores = [];
+        if ($user->is_storekeeper) {
+            $stores = $user->stores()->get();
+        } else {
+            $stores = Store::where('district', $user->district)->get();
+        }
+        $response = [
+            'user' => auth()->user(),
+            'token' => $request->bearerToken(),
+            'stores' => StoreResource::collection($stores)
+        ];
+        return response()->json($response, 200);
+        return auth()->user();
+    }
+
     public function store(StoreUserRequest $request)
     {
         if (!auth()->user()->is_admin) {
