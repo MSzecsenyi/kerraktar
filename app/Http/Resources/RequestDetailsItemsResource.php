@@ -10,10 +10,10 @@ class RequestDetailsItemsResource extends JsonResource
     private static $requestId;
 
     public static function customCollection($resource, $parentRequestId): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-        {
-            self::$requestId = $parentRequestId;
-            return parent::collection($resource);
-        }
+    {
+        self::$requestId = $parentRequestId;
+        return parent::collection($resource);
+    }
 
     public function toArray($request)
     {
@@ -23,7 +23,7 @@ class RequestDetailsItemsResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'category' => $this->category->category_name,
+            // 'category' => $this->category->category_name,
             'item_name' => $this->item_name,
             'amount' => $this->amount,
             'is_selected' => $isSelected,
