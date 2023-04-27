@@ -23,7 +23,6 @@ class RequestDetailsItemsResource extends JsonResource
 
         return [
             'id' => $this->id,
-            // 'category' => $this->category->category_name,
             'item_name' => $this->item_name,
             'amount' => $this->amount,
             'is_selected' => $isSelected,

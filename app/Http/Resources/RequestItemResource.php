@@ -26,7 +26,6 @@ class RequestItemResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'category' => $this->category->category_name,
             'item_name' => $this->item_name,
             'amount' => $this->amount,
             'in_store_amount' => $this->in_store_amount,
