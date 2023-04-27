@@ -9,6 +9,7 @@ use App\Models\TakeOut;
 use App\Models\UniqueItem;
 use Error;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Psy\Readline\Hoa\Console;
 
 class TakeOutController extends Controller
@@ -95,12 +96,16 @@ class TakeOutController extends Controller
             return response()->json("already returned item", 400);
         }
 
+        DB::beginTransaction();
         $takeOut->update(['end_date' => now()]);
 
         foreach ($takeOut->items as $item) {
             $item = Item::find($item->id);
-            $pivot = $takeOut->items()->where('item_id', $item->id)->first();
+            $pivot = $takeOut->items()->where('item_id', $item->id)->first()->pivot;
             if (!$item->is_unique) {
+                error_log($item->item_name);
+                error_log($item->in_store_amount);
+                error_log($pivot->amount);
                 $item->increment('in_store_amount', $pivot->amount);
             }
         }
@@ -112,6 +117,7 @@ class TakeOutController extends Controller
             $uniqueItem->save();
         }
 
+        DB::commit();
         return response()->json($takeOut, 200);
     }
 

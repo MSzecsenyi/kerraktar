@@ -166,7 +166,7 @@ class ItemController extends Controller
 
         $item = Item::findOrFail($request->input('id'));
 
-        return response()->json(new ItemResource($item), 201);
+        return response()->json(new ItemResource($item), 200);
     }
 
     /**
