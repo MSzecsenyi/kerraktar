@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('take_out_id')->constrained();
             $table->foreignId('item_id')->constrained();
             $table->integer('amount')->default(0);
-            $table->string('notes_added')->nullable();
         });
     }
 

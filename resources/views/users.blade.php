@@ -43,9 +43,9 @@
                                 </div>
                                 <div>
                                     <label for="name"
-                                        class="block mb-2 text-sm font-medium text-gray-900">Csapatnév</label>
+                                        class="block mb-2 text-sm font-medium text-gray-900">Név/Csapatnév</label>
                                     <x-input type="text" name="name" id="name"
-                                        placeholder="Uborka János cscs." required />
+                                        placeholder="Rejtő Jenő (cscs.)" required />
                                 </div>
                             </div>
                             <div class="grid grid-rows-2 gap-6">
