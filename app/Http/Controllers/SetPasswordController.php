@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePasswordRequest;
+use Carbon\Carbon;
 
 class SetPasswordController extends Controller
 {
@@ -13,8 +14,10 @@ class SetPasswordController extends Controller
 
     public function store(StorePasswordRequest $request)
     {
-        auth()->user->update([
-            'password' => bcrypt($request->password)
+        error_log(Carbon::Now());
+        auth()->user()->update([
+            'password' => bcrypt($request->password),
+            'email_verified_at' => Carbon::now(),
         ]);
 
         return redirect()->route('users')->with('status', 'Jelszó sikeresen beállítva');
