@@ -14,10 +14,19 @@ class ItemImport implements ToModel, WithHeadingRow, WithValidation
      *
      * @return \Illuminate\Database\Eloquent\Model|null
      */
+
+    private $storeId;
+
+    public function __construct($storeId)
+    {
+        $this->storeId = $storeId;
+    }
+
     public function model(array $row)
     {
+        error_log($this->storeId);
         return new Item([
-            'store_id' => 1,
+            'store_id' => $this->storeId,
             'item_name' => $row['nev'],
             'amount' => $row['mennyiseg'],
             'in_store_amount' => $row['mennyiseg'],

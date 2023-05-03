@@ -60,7 +60,6 @@ class StoreController extends Controller
     public function store(StoreStoreRequest $request)
     {
         DB::beginTransaction();
-        // dd($request->all());
         $store = Store::create([
             'district' => $request->validated('district'),
             'address' => $request->validated('address'),
@@ -76,7 +75,7 @@ class StoreController extends Controller
 
         $tempFile = TemporaryFile::where('folder', $request->excelItems)->first();
         if ($tempFile) {
-            Excel::import(new ItemImport(), storage_path('app/tmp/' . $request->excelItems . '/' . $tempFile->filename));
+            Excel::import(new ItemImport($store->id), storage_path('app/tmp/' . $request->excelItems . '/' . $tempFile->filename));
         }
         DB::commit();
 
@@ -106,6 +105,7 @@ class StoreController extends Controller
     public function destroy(Store $store)
     {
         $store->items()->delete();
+        $store->uniqueItems()->delete();
         $store->delete();
 
         return redirect()->route('stores');

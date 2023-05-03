@@ -27,7 +27,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('user_destroy/{user}',                [UserController::class, 'destroy'])->name('user_destroy');
         Route::post('user_store',                           [UserController::class, 'store'])->name('user_store');
 
-        //Store endpoints
+        // Store endpoints
         Route::get('stores',                                [StoreController::class, 'index'])->name('stores');
         Route::delete('store_destroy/{store}',              [StoreController::class, 'destroy'])->name('store_destroy');
         Route::post('store_store',                          [StoreController::class, 'store'])->name('store_store');

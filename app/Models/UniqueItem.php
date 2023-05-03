@@ -24,11 +24,6 @@ class UniqueItem extends Model
         return $this->belongsTo(Item::class);
     }
 
-    public function requests()
-    {
-        return $this->belongsToMany(Request::class);
-    }
-
     public function takeOuts()
     {
         return $this->belongsToMany(TakeOut::class);
