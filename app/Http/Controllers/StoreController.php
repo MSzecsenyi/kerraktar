@@ -104,8 +104,12 @@ class StoreController extends Controller
      */
     public function destroy(Store $store)
     {
-        $store->items()->delete();
-        $store->uniqueItems()->delete();
+        foreach ($store->items() as $item) {
+            $item->uniqueItems()->delete();
+            $item->delete();
+        }
+        $store->requests()->delete();
+        $store->takeOuts()->delete();
         $store->delete();
 
         return redirect()->route('stores');

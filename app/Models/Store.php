@@ -21,6 +21,11 @@ class Store extends Model
         return $this->hasMany(Item::class);
     }
 
+    public function uniqueItems()
+    {
+        return $this->hasMany(UniqueItem::class);
+    }
+
     public function requests()
     {
         return $this->hasMany(Request::class);
