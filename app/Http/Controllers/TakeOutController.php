@@ -8,6 +8,7 @@ use App\Models\Item;
 use App\Models\TakeOut;
 use App\Models\UniqueItem;
 use Error;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Psy\Readline\Hoa\Console;
@@ -97,27 +98,31 @@ class TakeOutController extends Controller
         }
 
         DB::beginTransaction();
-        $takeOut->update(['end_date' => now()]);
+        try {
+            $takeOut->update(['end_date' => now()]);
 
-        foreach ($takeOut->items as $item) {
-            $item = Item::find($item->id);
-            $pivot = $takeOut->items()->where('item_id', $item->id)->first()->pivot;
-            if (!$item->is_unique) {
-                error_log($item->item_name);
-                error_log($item->in_store_amount);
-                error_log($pivot->amount);
-                $item->increment('in_store_amount', $pivot->amount);
+            foreach ($takeOut->items as $item) {
+                $item = Item::find($item->id);
+                $pivot = $takeOut->items()->where('item_id', $item->id)->first()->pivot;
+                if (!$item->is_unique) {
+                    error_log($item->item_name);
+                    error_log($item->in_store_amount);
+                    error_log($pivot->amount);
+                    $item->increment('in_store_amount', $pivot->amount);
+                }
             }
-        }
 
-        foreach ($takeOut->uniqueItems as $uniqueItem) {
-            $uniqueItem->update(['taken_out_by' => null]);
-            $item = $uniqueItem->item;
-            $item->increment('in_store_amount');
-            $uniqueItem->save();
+            foreach ($takeOut->uniqueItems as $uniqueItem) {
+                $uniqueItem->update(['taken_out_by' => null]);
+                $item = $uniqueItem->item;
+                $item->increment('in_store_amount');
+                $uniqueItem->save();
+            }
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return response("error during db transaction", 500);
         }
-
-        DB::commit();
         return response()->json($takeOut, 200);
     }
 

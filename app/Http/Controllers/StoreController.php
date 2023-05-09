@@ -9,6 +9,7 @@ use App\Models\Item;
 use App\Models\Store;
 use App\Models\TemporaryFile;
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -60,24 +61,29 @@ class StoreController extends Controller
     public function store(StoreStoreRequest $request)
     {
         DB::beginTransaction();
-        $store = Store::create([
-            'district' => $request->validated('district'),
-            'address' => $request->validated('address'),
-        ]);
+        try {
+            $store = Store::create([
+                'district' => $request->validated('district'),
+                'address' => $request->validated('address'),
+            ]);
 
-        foreach ($request->storekeepers as $storekeeperId) {
-            try {
-                $store->users()->attach($storekeeperId);
-            } catch (\Exception $e) {
-                error_log($e);
+            foreach ($request->storekeepers as $storekeeperId) {
+                try {
+                    $store->users()->attach($storekeeperId);
+                } catch (\Exception $e) {
+                    error_log($e);
+                }
             }
-        }
 
-        $tempFile = TemporaryFile::where('folder', $request->excelItems)->first();
-        if ($tempFile) {
-            Excel::import(new ItemImport($store->id), storage_path('app/tmp/' . $request->excelItems . '/' . $tempFile->filename));
+            $tempFile = TemporaryFile::where('folder', $request->excelItems)->first();
+            if ($tempFile) {
+                Excel::import(new ItemImport($store->id), storage_path('app/tmp/' . $request->excelItems . '/' . $tempFile->filename));
+            }
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return response("error during db transaction", 500);
         }
-        DB::commit();
 
         return redirect()->route('stores');
     }

@@ -37,11 +37,11 @@ class RequestController extends Controller
     public function index()
     {
         $user = auth()->user();
-        if ($user->is_storekeeper) {
+        if ($user->is_group) {
+            $requests = $user->requests;
+        } else if ($user->is_storekeeper) {
             $storeIds = $user->stores->pluck('id');
             $requests = Request::whereIn('store_id', $storeIds)->get();
-        } else if ($user->is_group) {
-            $requests = $user->requests;
         } else {
             return response()->json("Unauthorized request", 401);
         }
@@ -63,6 +63,7 @@ class RequestController extends Controller
             $request->items()->detach();
 
             foreach ($req->all() as $item) {
+                error_log($item['id']);
                 $request->items()->attach([$item['id'] => ['amount' => $item['amount']]]);
             }
 

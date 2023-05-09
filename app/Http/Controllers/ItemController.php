@@ -8,7 +8,11 @@ use App\Http\Resources\ItemTakeOutResource;
 use App\Http\Resources\TakeOutResource;
 use App\Models\Item;
 use App\Models\UniqueItem;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ItemController extends Controller
 {
@@ -77,24 +81,33 @@ class ItemController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
-        $item = Item::create([
-            'category_id' => $request->input('category_id'),
-            'store_id' => $request->input('store_id'),
-            'item_name' => $request->input('item_name'),
-            'amount' => $request->input('amount'),
-            'in_store_amount' => $request->input('amount'),
-            'is_unique' => $request->input('is_unique'),
-        ]);
+        DB::beginTransaction();
 
-        if ($item->is_unique) {
-            foreach ($request->input('unique_items') as $uniqueItem) {
-                $newUniqueItem = new UniqueItem($uniqueItem);
-                $newUniqueItem->item()->associate($item);
-                $newUniqueItem->save();
+        try {
+            $item = Item::create([
+                'category_id' => $request->input('category_id'),
+                'store_id' => $request->input('store_id'),
+                'item_name' => $request->input('item_name'),
+                'amount' => $request->input('amount'),
+                'in_store_amount' => $request->input('amount'),
+                'is_unique' => $request->input('is_unique'),
+            ]);
+
+            if ($item->is_unique) {
+                foreach ($request->input('unique_items') as $uniqueItem) {
+                    $newUniqueItem = new UniqueItem($uniqueItem);
+                    $newUniqueItem->item()->associate($item);
+                    $newUniqueItem->save();
+                }
             }
+            DB::commit();
+            return response()->json(new ItemResource($item), 201);
+        } catch (QueryException $e) {
+            Log::error("Error creating item: " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
+            DB::rollBack();
+            return response("error while saving the item", 500);
         }
-
-        return response()->json(new ItemResource($item), 201);
     }
 
     /**
@@ -110,43 +123,50 @@ class ItemController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
-        $item = Item::findOrFail($request->input('id'));
-        $item->update([
-            'category_id' => $request->input('category_id'),
-            'item_name' => $request->input('item_name'),
-            'amount' => $request->input('amount'),
-            'in_store_amount' => $item->in_store_amount + $request->input('amount') - $item->amount,
-            'is_unique' => $request->input('is_unique'),
-        ]);
+        DB::beginTransaction();
 
-        $existingUniqueItems = $item->uniqueItems;
-        $requestUniqueItems = collect($request->input('unique_items'));
+        try {
+            $item = Item::findOrFail($request->input('id'));
+            $item->update([
+                'category_id' => $request->input('category_id'),
+                'item_name' => $request->input('item_name'),
+                'amount' => $request->input('amount'),
+                'in_store_amount' => $item->in_store_amount + $request->input('amount') - $item->amount,
+                'is_unique' => $request->input('is_unique'),
+            ]);
 
-        // Get the IDs of the unique items in the request
-        $requestUniqueItemIds = $requestUniqueItems->pluck('id')->filter();
+            $existingUniqueItems = $item->uniqueItems;
+            $requestUniqueItems = collect($request->input('unique_items'));
 
-        // Find the unique items in $existingUniqueItems that are not in $requestUniqueItems
-        $itemsToDelete = $existingUniqueItems->filter(function ($existingUniqueItem) use ($requestUniqueItemIds) {
-            return !$requestUniqueItemIds->contains($existingUniqueItem->id);
-        });
+            // Get the IDs of the unique items in the request
+            $requestUniqueItemIds = $requestUniqueItems->pluck('id')->filter();
 
-        // Delete the found unique items
-        foreach ($itemsToDelete as $itemToDelete) {
-            $itemToDelete->delete();
-        }
-        if ($item->is_unique) {
-            foreach ($request->input('unique_items') as $uniqueItem) {
-                if ($uniqueItem['id']) {
-                    $existingUniqueItem = UniqueItem::findOrFail($uniqueItem['id']);
-                    $existingUniqueItem->update($uniqueItem);
-                } else {
-                    $newUniqueItem = new UniqueItem($uniqueItem);
-                    $newUniqueItem->item()->associate($item);
-                    $newUniqueItem->save();
+            // Find the unique items in $existingUniqueItems that are not in $requestUniqueItems
+            $itemsToDelete = $existingUniqueItems->filter(function ($existingUniqueItem) use ($requestUniqueItemIds) {
+                return !$requestUniqueItemIds->contains($existingUniqueItem->id);
+            });
+
+            // Delete the found unique items
+            foreach ($itemsToDelete as $itemToDelete) {
+                $itemToDelete->delete();
+            }
+            if ($item->is_unique) {
+                foreach ($request->input('unique_items') as $uniqueItem) {
+                    if ($uniqueItem['id']) {
+                        $existingUniqueItem = UniqueItem::findOrFail($uniqueItem['id']);
+                        $existingUniqueItem->update($uniqueItem);
+                    } else {
+                        $newUniqueItem = new UniqueItem($uniqueItem);
+                        $newUniqueItem->item()->associate($item);
+                        $newUniqueItem->save();
+                    }
                 }
             }
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return response("Error while saving the item", 500);
         }
-
         $item = Item::findOrFail($request->input('id'));
 
         return response()->json(new ItemResource($item), 200);
@@ -164,8 +184,15 @@ class ItemController extends Controller
             return response()->json("Unauthorized request", 401);
         }
 
-        $item->uniqueItems()->delete();
-        $item->delete();
+        DB::beginTransaction();
+        try {
+            $item->uniqueItems()->delete();
+            $item->delete();
+            DB::commit();
+        } catch (QueryException $e) {
+            DB::rollBack();
+            return response("Error while deleting the item", 500);
+        }
 
         return response()->json(null, 204);
     }
