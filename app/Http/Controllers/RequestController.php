@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\RequestResource;
 use App\Http\Resources\RequestDetailsItemsResource;
 use App\Models\Request;
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\Request as RouteRequest;
 
@@ -37,11 +38,15 @@ class RequestController extends Controller
     public function index()
     {
         $user = auth()->user();
-        if ($user->is_group) {
-            $requests = $user->requests;
+
+        if ($user->is_group && $user->is_storekeeper) {
+            $storeIds = Store::where('district', $user->district)->pluck('id');
+            $requests = Request::whereIn('store_id', $storeIds)->get();
         } else if ($user->is_storekeeper) {
             $storeIds = $user->stores->pluck('id');
             $requests = Request::whereIn('store_id', $storeIds)->get();
+        } else if ($user->is_group) {
+            $requests = $user->requests;
         } else {
             return response()->json("Unauthorized request", 401);
         }

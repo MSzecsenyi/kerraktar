@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\TakeOutDetailedResource;
 use App\Http\Resources\TakeOutResource;
 use App\Models\Item;
+use App\Models\Store;
 use App\Models\TakeOut;
 use App\Models\UniqueItem;
 use Error;
@@ -18,10 +19,13 @@ class TakeOutController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        if ($user->is_storekeeper) {
+        if ($user->is_group && $user->is_storekeeper) {
+            $storeIds = Store::where('district', $user->district)->pluck('id');
+            $takeOuts = TakeOut::whereIn('store_id', $storeIds)->get();
+            return TakeOutResource::collection($takeOuts);
+        } else if ($user->is_storekeeper) {
             $storeIds = $user->stores->pluck('id');
             $takeOuts = TakeOut::whereIn('store_id', $storeIds)->get();
-
             return TakeOutResource::collection($takeOuts);
         } else if ($user->is_group) {
             $takeOuts = $user->takeOuts;
